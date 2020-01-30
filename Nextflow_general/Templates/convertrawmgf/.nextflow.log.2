@@ -1,0 +1,44 @@
+Jan-29 12:03:57.988 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf --fasta data/ABRF_iPRG_2012_target.fasta --raws data/OVEMB150205_12.raw -profile conda
+Jan-29 12:03:58.103 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 19.10.0
+Jan-29 12:03:58.112 [main] INFO  nextflow.cli.CmdRun - Launching `main.nf` [small_knuth] - revision: 049a75c8a0
+Jan-29 12:03:58.128 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/nextflow.config
+Jan-29 12:03:58.128 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/nextflow.config
+Jan-29 12:03:58.147 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `conda`
+Jan-29 12:03:58.476 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [debug, test, conda, awsbatch, singularity, docker]
+Jan-29 12:03:58.508 [main] DEBUG nextflow.extension.OperatorEx - Dataflow extension methods: branch,buffer,chain,choice,collate,collect,collectFile,combine,concat,count,countBy,countFasta,countFastq,countLines,countText,cross,distinct,filter,first,flatMap,flatten,fork,groupBy,groupTuple,ifEmpty,into,join,last,map,max,mean,merge,min,mix,phase,print,println,randomSample,reduce,separate,set,splitCsv,splitFasta,splitFastq,splitText,spread,subscribe,sum,take,tap,toDouble,toFloat,toInteger,toList,toLong,toSortedList,transpose,unique,until,view
+Jan-29 12:03:58.512 [main] DEBUG nextflow.Session - Session uuid: 9405e45f-aa72-48e0-af07-8312449ac6bf
+Jan-29 12:03:58.512 [main] DEBUG nextflow.Session - Run name: small_knuth
+Jan-29 12:03:58.513 [main] DEBUG nextflow.Session - Executor pool size: 12
+Jan-29 12:03:58.534 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 19.10.0 build 5170
+  Created: 21-10-2019 15:07 UTC (17:07 CEST)
+  System: Linux 5.0.0-38-generic
+  Runtime: Groovy 2.5.8 on OpenJDK 64-Bit Server VM 11.0.5+10-post-Ubuntu-0ubuntu1.119.04
+  Encoding: UTF-8 (UTF-8)
+  Process: 5265@adm-125488 [127.0.0.1]
+  CPUs: 12 - Mem: 31.2 GB (8.4 GB) - Swap: 976 MB (976 MB)
+Jan-29 12:03:58.550 [main] DEBUG nextflow.Session - Work-dir: /home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/work [ext2/ext3]
+Jan-29 12:03:58.551 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/bin
+Jan-29 12:03:58.562 [main] DEBUG nextflow.Session - Observer factory: TowerFactory
+Jan-29 12:03:58.563 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jan-29 12:03:58.689 [main] DEBUG nextflow.Session - Session start invoked
+Jan-29 12:03:58.821 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jan-29 12:03:58.828 [main] WARN  nextflow.script.ScriptBinding - Access to undefined parameter `help` -- Initialise it to a default value eg. `params.help = some_value`
+Jan-29 12:03:58.956 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-29 12:03:58.956 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-29 12:03:58.960 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Jan-29 12:03:58.964 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=12; memory=31.2 GB; capacity=12; pollInterval=100ms; dumpInterval=5m
+Jan-29 12:03:58.997 [main] DEBUG nextflow.processor.TaskProcessor - Creating operator > convert_raw_mzml -- maxForks: 12
+Jan-29 12:03:59.015 [main] DEBUG nextflow.script.BaseScript - No entry workflow defined
+Jan-29 12:03:59.016 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Jan-29 12:03:59.016 [main] DEBUG nextflow.Session - Session await
+Jan-29 12:03:59.115 [Actor Thread 4] INFO  nextflow.conda.CondaCache - Creating Conda env: /home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/environment.yml [cache /home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/work/conda/nf-core-prottemplate-1d1a3a164d22f6e280ea5da741f96822]
+Jan-29 12:04:14.514 [Actor Thread 4] DEBUG nextflow.conda.CondaCache - Conda create complete env=/home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/environment.yml path=/home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/work/conda/nf-core-prottemplate-1d1a3a164d22f6e280ea5da741f96822
+Jan-29 12:04:14.578 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-29 12:04:14.582 [Task submitter] INFO  nextflow.Session - [73/41d4e4] Submitted process > convert_raw_mzml (1)
+Jan-29 12:04:18.803 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: convert_raw_mzml (1); status: COMPLETED; exit: 0; error: -; workDir: /home/veits/devel/Bioinformatics/Workflows/NextFlow/convertrawmgf/work/73/41d4e4ec53d97247262950894146f8]
+Jan-29 12:04:18.812 [main] DEBUG nextflow.Session - Session await > all process finished
+Jan-29 12:04:18.813 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jan-29 12:04:18.821 [main] DEBUG nextflow.trace.StatsObserver - Workflow completed > WorkflowStats[succeedCount=1; failedCount=0; ignoredCount=0; cachedCount=0; succeedDuration=4.2s; failedDuration=0ms; cachedDuration=0ms]
+Jan-29 12:04:18.959 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
+Jan-29 12:04:18.979 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

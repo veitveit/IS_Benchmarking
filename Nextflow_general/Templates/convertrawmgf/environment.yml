@@ -1,0 +1,10 @@
+name: nf-core-prottemplate
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - thermorawfileparser=1.1.11
+
+
+
