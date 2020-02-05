@@ -1,0 +1,11 @@
+name: nf-core-tpp
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - openms=2.4.0
+  - thermorawfileparser=1.1.11
+  - tpp=5.0.0
+  - comet-ms=2019014
+
