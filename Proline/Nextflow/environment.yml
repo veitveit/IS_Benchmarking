@@ -1,0 +1,11 @@
+name: nf-core-proline-labelfree
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - thermorawfileparser=1.1.11
+  - searchgui=3.3.10
+  - peptide-shaker=1.16.36
+  - unzip=6.0 
+  - mono=5.14.0.177
