@@ -498,9 +498,12 @@ process run_proline {
       file "proline_results/*.xlsx" into proline_out
 
     script:
+    mem = " ${task.memory}"
+    mem = mem.replaceAll(" ","")
+    mem = mem.replaceAll("B","")
     """
     cp -r /proline/* .
-    /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/bin/java -cp "config:lib/*:proline-cli-0.2.0-SNAPSHOT.jar" -Dlogback.configurationFile=config/logback.xml fr.proline.cli.ProlineCLI \\
+    /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/bin/java -Xmx${mem} -cp "config:lib/*:proline-cli-0.2.0-SNAPSHOT.jar" -Dlogback.configurationFile=config/logback.xml fr.proline.cli.ProlineCLI \\
             run_lfq_workflow -i="${import_param}"  -ed="${exp_design}" -c="${lfq_param}"
     """
 }
