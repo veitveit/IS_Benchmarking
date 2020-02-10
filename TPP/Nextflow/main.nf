@@ -158,7 +158,7 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
         .fromPath( params.comet_param_file )
 
 if (params.comet_param_file == "none") {
-} else if(!(file(params.comet_param_file).exists())) {
+} else if( !(file(params.comet_param_file).exists()) ) {
         log.error "Comet parameter file does not exit"; exit 1
     
 }
@@ -172,7 +172,6 @@ process convert_raw_mzml {
     publishDir "${params.outdir}"
     input:
       file rawfile from input_raw
-
 
     output:
      file "${rawfile.baseName}.mzML" into (mzml, mzml2)
@@ -330,7 +329,7 @@ process run_proteinprophet {
 process run_stpeter {
     publishDir "${params.outdir}"
     input:
-     file protxml_names from protxml.toList() 
+     each file(protxml) from protxml 
      file fasta from input_fasta3
 
     output:
@@ -338,10 +337,7 @@ process run_stpeter {
      
     script:
     """
-    for infile in ${protxml_names}
-    do
-    StPeter -f ${params.quantification_fdr} -t ${params.fragment_mass_tolerance} "\$infile"
-    done
+    StPeter -f ${params.quantification_fdr}  "${protxml}"
     """
     
 }

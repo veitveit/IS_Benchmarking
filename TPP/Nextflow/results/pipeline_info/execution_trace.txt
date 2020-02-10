@@ -1,2 +1,0 @@
-task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
-1	58/7b5dd9	27232	convert_raw_mzml (1)	FAILED	1	2020-01-29 10:57:25.566	817ms	712ms	-	-	-	-	-
