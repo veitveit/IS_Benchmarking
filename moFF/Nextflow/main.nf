@@ -23,9 +23,11 @@ def helpMessage() {
 
 // Validate inputs
 params.raws = params.raws ?: { log.error "No read data provided. Make sure you have used the '--raws' option."; exit 1 }()
-params.absence = params.absence ?: { log.error "No absence peak data provided. Make sure you have used the '--absence' option."; exit 1 }()
+// params.absence = params.absence ?: { log.error "No absence peak data provided. Make sure you have used the '--absence' option."; exit 1 }()
 params.inifile = params.inifile ?: { log.error "No absence peak data provided. Make sure you have used the '--absence' option."; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
+//params.loc_in = params.loc_in ?: { log.error "No output directory provided. Will put the results into './results'"; return "./results" }()
+params.raw_repo = params.raw_repo ?: { log.error "21"; exit 1 }()
 
 
 /*
@@ -51,9 +53,12 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
  */
 Channel.fromPath( params.raws ).set { input_raw }
 
-Channel.fromPath( params.absence ).set { input_absence; }
+// Channel.fromPath( params.absence ).set { input_absence; }
 
 Channel.fromPath( params.inifile ).set { input_ini; }
+
+
+Channel.fromPath( params.raw_repo ).into { raw_repo; loc_in; }
 
 
 /*
@@ -67,8 +72,10 @@ process moff_all {
 
 
     input:
-        file rawfile from input_raw
+        //file rawfile from input_raw
         file inifile from input_ini
+        file rawrepodir from raw_repo
+        //file loc_in from loc_in
         //file absencefile from input_absence
 
 
@@ -81,7 +88,15 @@ process moff_all {
         // docker run -v data:/data -v results:/results  -i -t veitveit/moffworkflow:dev python /moFF/moff_all.py --config_file /moFF/configuration_file.ini -i "\$(find "/data/raw/" -type f -name "*.raw" | head -n1;)" --tol 10 -rt_win_peak 1 --xic_length 3 --loc_out /reuslts/ --mbr off
 
         """
-        python3 /opt/conda/envs/nf-core-moff-ms1/share/moff-2.0.3-3/moff_all.py --config_file ${inifile}  -i ${rawfile} -o ./  -f 2 -z 1> docker.log
+        #find / -name "moff_all.py" -type f 2> /dev/null;
+        #find / -name "${inifile}" -type f 2> /dev/null;
+
+        repodir="/opt/conda/envs/nf-core-moff-ms1/share/moff-2.0.3-3/";
+
+        #echo "${inifile}";
+
+        #python3 "\${repodir}/moff_all.py" --config_file "${inifile}" --loc_in "${rawrepodir}" --ext "txt"; # --raw_repo "${rawrepodir}"
+        python3 "\${repodir}/moff_mbr.py" --loc_in "${rawrepodir}" --mbr only 1> docker.log;
         """
 }
 

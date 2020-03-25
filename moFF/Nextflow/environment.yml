@@ -1,14 +1,8 @@
 name: nf-core-moff-ms1
 channels:
-  - anaconda
   - conda-forge
   - bioconda
+  - anaconda
   - defaults
-dependencies:
-  - peptide-shaker=1.16.36
-  - pandas=0.23
-  - numpy=1.15.0
-  - scipy=1.1.0
-  - scikit-learn=0.19
-  - pyteomics=3.5
-  - moff
+#dependencies:
+  # - moff
