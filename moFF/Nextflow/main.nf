@@ -80,7 +80,10 @@ process moff_all {
 
 
     output:
-        file 'docker.log' into ( output )
+        stdout stdout_channel
+        path "${params.loc_out}" into allinput
+        //path "absence_peak_data/output/**" into ALLOUTPUT
+        //file './**' into ALLOUTPUT
         //file "${rawfile.baseName}.mzML" into (mzml, mzml2)
 
     script:
@@ -93,13 +96,20 @@ process moff_all {
 
         repodir="/opt/conda/envs/nf-core-moff-ms1/share/moff-2.0.3-3/";
 
+
+        echo -e "import pandas\npandas.show_versions()" | python3;
+
         #echo "${inifile}";
 
-        #python3 "\${repodir}/moff_all.py" --config_file "${inifile}" --loc_in "${rawrepodir}" --ext "txt"; # --raw_repo "${rawrepodir}"
-        python3 "\${repodir}/moff_mbr.py" --loc_in "${rawrepodir}" --mbr only 1> docker.log;
+        #python3 "\${repodir}/moff_all.py" --loc_out "${params.outdir}" --config_file "${inifile}" --loc_in "${rawrepodir}" --ext "txt"; # --raw_repo "${rawrepodir}"
+        #python3 "\${repodir}/moff_mbr.py" --loc_out "${params.outdir}" --loc_in "${rawrepodir}" --mbr only;
+        python3 "\${repodir}/moff_all.py" --loc_out "${params.outdir}"  --config_file "${inifile}";
+
+        #find "./" -type f 2> /dev/null;
         """
 }
 
+stdout_channel.view { "stdout:\t$it" }
 
 
 workflow.onComplete {
