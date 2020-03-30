@@ -6,8 +6,13 @@ LABEL authors="Veit Schwaemmle" \
 COPY environment.yml /
 RUN conda env create -f /environment.yml && conda clean -a;
 
-RUN conda install python=3.6; \
-	conda install -c conda-forge -c bioconda moff;
+
+#RUN conda install \
+#	-c conda-forge \
+#	-c bioconda \
+#		moff==py36_0 \
+#		python=3.6 \
+#		pandas=0.25.1=py36_0;
 
 
 ENV PATH /opt/conda/envs/nf-core-moff-ms1/bin:$PATH
