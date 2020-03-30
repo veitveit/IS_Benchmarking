@@ -4,5 +4,7 @@ channels:
   - bioconda
   - anaconda
   - defaults
-#dependencies:
-  # - moff
+dependencies:
+  - python=3.6.10
+  - moff=2.0.3
+  - pandas=0.24.2
