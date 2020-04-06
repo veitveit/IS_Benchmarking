@@ -7,16 +7,10 @@ COPY environment.yml /
 RUN conda env create -f /environment.yml && conda clean -a;
 
 
-#RUN conda install \
-#	-c conda-forge \
-#	-c bioconda \
-#		moff==py36_0 \
-#		python=3.6 \
-#		pandas=0.25.1=py36_0;
+SHELL ["conda", "run", "-n", "moFF", "/bin/bash", "-c"]
 
 
-ENV PATH /opt/conda/envs/nf-core-moff-ms1/bin:$PATH
+ENV PATH /opt/conda/envs/moFF/bin:$PATH
 
 
-SHELL ["conda", "run", "-n", "nf-core-moff-ms1", "/bin/bash", "-c"]
-
+ENTRYPOINT ["conda", "run", "-n", "moFF", "/bin/bash", "-c"]

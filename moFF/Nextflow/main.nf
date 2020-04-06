@@ -61,6 +61,23 @@ Channel.fromPath( params.inifile ).set { input_ini; }
 Channel.fromPath( params.raw_repo ).into { raw_repo; loc_in; }
 
 
+
+// process get_peptideshaker_tsv {
+//     publishDir "${params.outdir}"
+//     input:
+//         tuple file(pepshaker), file(mgffile) from peptideshaker_file
+
+//     output:
+//       file "${params.name}_${mgffile.baseName}_1_Default_PSM_Report_with_non-validated_matches.txt" into (peptideshaker_tsv_file)
+
+//     script:
+//         """
+//         peptide-shaker eu.isas.peptideshaker.cmd.PathSettingsCLI  -temp_folder ./tmp -log ./log
+//         peptide-shaker eu.isas.peptideshaker.cmd.ReportCLI -in "./${pepshaker}" -out_reports "./" -reports "4"
+//         """    
+// }
+
+
 /*
  * STEP 1 - convert raw files to mgf
  */
@@ -81,31 +98,19 @@ process moff_all {
 
     output:
         stdout stdout_channel
-        path "${params.loc_out}" into allinput
-        //path "absence_peak_data/output/**" into ALLOUTPUT
-        //file './**' into ALLOUTPUT
-        //file "${rawfile.baseName}.mzML" into (mzml, mzml2)
+        path "absence_peak_data/raw_repo/apex_output" into apex_output
+        path "absence_peak_data/mbr_output/" into mbr_output
 
     script:
-        // docker run -it veitveit/moffworkflow:dev bash
-        // docker run -v data:/data -v results:/results  -i -t veitveit/moffworkflow:dev python /moFF/moff_all.py --config_file /moFF/configuration_file.ini -i "\$(find "/data/raw/" -type f -name "*.raw" | head -n1;)" --tol 10 -rt_win_peak 1 --xic_length 3 --loc_out /reuslts/ --mbr off
-
         """
-        #find / -name "moff_all.py" -type f 2> /dev/null;
-        #find / -name "${inifile}" -type f 2> /dev/null;
+        source activate moFF;
 
-        repodir="/opt/conda/envs/nf-core-moff-ms1/share/moff-2.0.3-3/";
+        moff_filepath=\$(which moff_all.py;);
 
-
-        echo -e "import pandas\npandas.show_versions()" | python3;
-
-        #echo "${inifile}";
-
-        #python3 "\${repodir}/moff_all.py" --loc_out "${params.outdir}" --config_file "${inifile}" --loc_in "${rawrepodir}" --ext "txt"; # --raw_repo "${rawrepodir}"
-        #python3 "\${repodir}/moff_mbr.py" --loc_out "${params.outdir}" --loc_in "${rawrepodir}" --mbr only;
-        python3 "\${repodir}/moff_all.py" --loc_out "${params.outdir}"  --config_file "${inifile}";
-
-        #find "./" -type f 2> /dev/null;
+        #python3 "\${moff_filepath}" --loc_out "${params.outdir}" --config_file "${inifile}" --loc_in "${rawrepodir}" --ext "txt"; # --raw_repo "${rawrepodir}"
+        #python3 "\${moff_filepath}" --loc_out "${params.outdir}" --loc_in "${rawrepodir}" --mbr only;
+        #python3.6 "\${moff_filepath}" --loc_out "${params.outdir}"  --config_file "${inifile}";
+        python3.6 "\${moff_filepath}" --config_file "${inifile}" --peptide_summary 2>&1;
         """
 }
 
@@ -113,7 +118,7 @@ stdout_channel.view { "stdout:\t$it" }
 
 
 workflow.onComplete {
-    log.info ( workflow.success ? "\nDone! Open the files in the following folder --> $params.outdir\n" : "Oops .. something went wrong" )
+    log.info ( workflow.success ? "\nDone! The results should now be in the same folder as the input data" : "Oops .. something went wrong" )
 }
 
    
