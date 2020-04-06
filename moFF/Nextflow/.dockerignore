@@ -1,4 +1,5 @@
 .nextflow*
+.*
 absence_peak_data/
 conf/
 data/
