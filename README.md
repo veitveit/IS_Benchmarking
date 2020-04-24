@@ -16,8 +16,9 @@ To allow fully reproducible results, each workflow should be executable using th
 - [ ] __Dockerfile__ Installations instructions for all tools with automatic inclusion of conda packages
 - [ ] __data__ Folder with simple example data set to test the workflow 
 - [ ] __conf__ Folder with configuration files for testing and execution
+- [ ] __README.md__ Detailed description of parameter files and how to run the workflow on our data set.  Include details about source of data and database. Please also include other options (e.g. command line options/flags) necessary to run the workflow
 
 #### Content of Result folder
-- [ ] __Result files__ for identified and quantified peptides and proteins, preferably in the form of a table
-- [ ] __Parameter files__ for running the workflow on the data set (please also include details about source of data and database). Please also include other options (e.g. command line options/flags) necessary to run the workflow
-- [ ] __Performance report__ (TODO) E.g. execution time on defined architecture, ...
+- [ ] __Result files__ from each lab for identified and quantified peptides and proteins, preferably in the form of a table. Please change the name of the files to _WorkflowName_Lab_originalfilename_
+- [ ] __Parameter files__ for running the workflow on the data set
+- [ ] __Performance report__ (TODO: details) E.g. execution time on defined architecture, ...
