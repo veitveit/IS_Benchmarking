@@ -38,7 +38,7 @@ Download the raw files from PRIDE: http://proteomecentral.proteomexchange.org/cg
 
 Run the workflow with the following command and parameters after changing _RAWFOLDER_ to the folder where the raw files are located. You will also need to place the files _pxd001819.txt_, _yeast_UPS.fasta_ and _lfq_param_file_pxd001819.txt_ into in the current folder. These files are given in the Results folder of this workflow: https://github.com/veitveit/IS_Benchmarking/tree/master/Proline/Results
 ```
-nextflow run main.nf --raws RAWFOLDER/*.raw* --precursor_mass_tolerance 5 --fragment_mass_tolerance 0.8 --miscleavages 2 \
+nextflow run main.nf --raws RAWFOLDER/*.raw --precursor_mass_tolerance 5 --fragment_mass_tolerance 0.8 --miscleavages 2 \
 --variable_mods = 'Oxidation of M, Acetylation of protein N-term' --experiment_design 'pxd001819.txt' --lfq_param \
 'lfq_param_file.txt'  -profile docker
 ```
