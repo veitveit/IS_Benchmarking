@@ -35,7 +35,7 @@ def helpMessage() {
       --peptide_min_length              Minimum peptide length for filtering
       --peptide_max_length              Maximum peptide length for filtering
       --precursor_mass_tolerance        Mass tolerance of precursor mass (ppm)
-      --fragment_mass_tolerance         Mass tolerance of fragment mass bin (ppm)
+      --fragment_mass_tolerance         Mass tolerance of fragment mass bin (Da)
       --fragment_bin_offset             Offset of fragment mass bin (Comet specific parameter)
       --fions                          Forward ions for spectral matching
       --rions                          Reverse ions for spectral matching
@@ -54,9 +54,6 @@ def helpMessage() {
      --min_charge                       Minimal precursor charge 
      --max_charge                       Maximal precursor charge 
       --max_rt_alignment_shift          Maximal retention time shift (sec) resulting from linear alignment      
-      --spectrum_batch_size             Size of Spectrum batch for Comet processing (Decrease/Increase depending on Memory Availability)
-      --description_correct_features    Description of correct features for Percolator (0, 1, 2, 4, 8, see Percolator retention time and calibration) 
-      --klammer                         Retention time features are calculated as in Klammer et al. instead of with Elude.
       --skip_decoy_generation           Use a fasta databse that already includes decoy sequences
       --quantification_fdr              Assess and assign ids matched between runs with an additional quantification FDR
       --quantification_min_prob         Specify a minimum probability cut off for quantification
