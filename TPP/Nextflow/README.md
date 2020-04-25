@@ -1,4 +1,4 @@
-# Workflow to analyze label-free data with the trans-proteomic pipepline
+# Workflow to analyze label-free data with the trans-proteomic pipeline
 
 This workflow is based on a docker image which is available at the docker hub (https://hub.docker.com/repository/docker/veitveit/tppworkflow) and is downloaded automatically.
 If you want to build your own docker image, be ware taht it needs to be named veitveit/tppworkflow:dev or change the name in the configuration file. 
