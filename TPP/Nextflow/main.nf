@@ -3,9 +3,8 @@
 ========================================================================================
                          nf-core/tpp_workflow
 ========================================================================================
- nf-core/tpp_workflow Analysis Pipeline.
+(NOT YET A nf-core!)
  #### Homepage / Documentation
-TODO https://github.com/nf-core/tpp_workflow
 ----------------------------------------------------------------------------------------
 */
 
@@ -15,14 +14,11 @@ def helpMessage() {
     log.info"""
     Usage:
 
-    You might need to build the docker image. A Dockerfile is available. Name it "veitveit/searchguiworkflow:dev" 
-    or change the name in the nextflow.cfragment_bin_offsetonf
-
     The typical command for running the pipeline is as follows:
     nextflow run main.nf  -profile docker
 
     For a test run with pre-given data, use:
-    nextflow run main.nf --raws 'folder/file.raw' --fasta 'folder/file.fasta' -profile docker, test
+    nextflow run main.nf -profile docker, test
 
 
     Mandatory arguments:
