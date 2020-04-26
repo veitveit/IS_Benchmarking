@@ -49,9 +49,12 @@ def helpMessage() {
       --fdr_peptide_threshold           Threshold for FDR filtering
       
       
-      
+    Quantification options      
       --quantification_fdr              FDR threshold to accept peptides for quantification
       --quantification_min_prob         Specify a minimum probability cut off for quantification
+      --experiment_design               Text-file containing 2 columns: first with raw file names and second with names for experimental conditions
+
+
           
     Other options:
       --outdir                          The output directory where the results will be saved
@@ -113,6 +116,7 @@ log.warn "Decoys have to be named with DECOY_ as prefix in your fasta database"
 params.quantification_fdr = 0.01
 params.quantification_min_prob = 0
 
+params.experiment_design = "none"
 
 /*
  * SET UP CONFIGURATION VARIABLES
@@ -138,8 +142,8 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
 /*
  * Create a channel for input raw files
  */
-  input_raw =   Channel
-        .fromPath( params.raws )
+  Channel
+        .fromPath( params.raws ).into {input_raw; input_raw2}
 
 /*
  * Create a channel for fasta file
@@ -156,6 +160,18 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
 if (params.comet_param_file == "none") {
 } else if( !(file(params.comet_param_file).exists()) ) {
         log.error "Comet parameter file does not exit"; exit 1
+    
+}
+
+
+/* 
+ * Create a channel for experimental design file
+ */
+input_exp_design =  Channel.fromPath(params.experiment_design)
+if (params.experiment_design == "none") {
+    log.warn "No experimental design! All raw files will be considered being from the one and the same experimental condition."
+} else if(!(file(params.experiment_design).exists())) {
+        log.error "File with experimental design does not exit"; exit 1
     
 }
 
@@ -196,7 +212,7 @@ process set_comet_configuration {
       enzyme = enzymemap[params.enzyme]
       if (enzyme == null) enzyme = enzymemap["Unspecified"]
       skip_decoy = params.skip_decoy_generation
-      modmap = ["Oxidation of M": "15.9949 M 0 3 -1 0 0 0.0", "Phosphorylation of STY": "79.966331 STY 0 3 -1 0 0 97.976896", "none": "0.0 X 0 3 -1 0"]
+      modmap = ["Oxidation of M": "15.9949 M 0 3 -1 0 0 0.0", "Phosphorylation of STY": "79.966331 STY 0 3 -1 0 0 97.976896", "Acetylation of K": "42.010565 K 0 3 -1 0 0", "Acetylation of protein N-term": " 42.010565 n 0 3 0 0 0", "none": "0.0 X 0 3 -1 0"]
       mods = params.variable_mods.split(",")  
       modout = ""
       for (int i=0; i<10; i++) {
@@ -335,6 +351,42 @@ process run_stpeter {
     """
     StPeter -f ${params.quantification_fdr}  "${protxml}"
     """
+    
+}
+
+/*
+ * STEP 5 - merge files according to experimental design
+*/ 
+
+process run_merge_quant {
+    publishDir "${params.outdir}"
+    input:
+     file csv_files from protquant.collect()
+     val raw_files from input_raw2.collect()
+     file exp_design_file from input_exp_design.ifEmpty(file("none"))
+
+    output:
+     file "all_quant_merged.csv" into allprotquant
+     
+    script:
+     // no file provided
+if (exp_design_file.getName() == "none") {
+       expdesign_text = "raw_file\texp_condition"
+       for( int i=0; i<raw_files.size(); i++ ) {
+         expdesign_text += "\n${raw_files[i].name}\tMain"
+       } 
+    """
+       touch exp_design.txt  
+       echo "${expdesign_text}" >> exp_design.txt
+       R CMD BATCH $baseDir/MergeOutput.R
+    """
+     } else {
+    """
+    cp "${exp_design_file}" exp_design.txt
+     R CMD BATCH $baseDir/MergeOutput.R
+    """
+     }
+
     
 }
 

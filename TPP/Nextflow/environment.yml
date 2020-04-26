@@ -8,4 +8,5 @@ dependencies:
   - thermorawfileparser=1.1.11
   - tpp=5.0.0
   - comet-ms=2019014
+  - r-base=3.6.1
 

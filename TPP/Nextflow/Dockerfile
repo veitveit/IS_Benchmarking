@@ -4,4 +4,5 @@ LABEL authors="Veit Schwaemmle" \
 
 COPY environment.yml /
 RUN conda env create -f /environment.yml && conda clean -a
+COPY MergeOutput.R  .
 ENV PATH /opt/conda/envs/nf-core-tpp/bin:$PATH
