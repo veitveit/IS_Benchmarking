@@ -1,3 +1,3 @@
 mzdbfile  exp_cond
-OVEMB150205_12.raw  50fmol
-OVEMB150205_14.raw  50fmol
+OVEMB150205_12.mzDB  50fmol
+OVEMB150205_14.mzDB  50fmol
