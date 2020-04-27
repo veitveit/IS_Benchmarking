@@ -36,11 +36,15 @@ You should have successfully tested the workflow using the procedure above.
 
 Download the raw files from PRIDE: http://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD001819
 
-Run the workflow with the following command and parameters after changing _RAWFOLDER_ to the folder where the raw files are located. You will also need to place the file _yeast_UPS.fasta_ into in the current folder. This file is given in the Results folder of the Proline workflow: https://github.com/veitveit/IS_Benchmarking/tree/master/Proline/Results
+Run the workflow with the following command and parameters after changing _RAWFOLDER_ to the folder where the raw files are located. You will also need to place the files _yeast_UPS.fasta_ and _pxd001819.txt_ into in the current folder. These files is given in the Results folder: https://github.com/veitveit/IS_Benchmarking/tree/master/Proline/Results
 
 Also adjust the parameter values _max_cpus_ and _max_memory_ to the computing power you have available.
 ```
-nextflow run main.nf --raws 'RAWFOLDER/*.raw' --fasta yeast_UPS.fasta --miscleavages 2 --fragment_mass_tolerance 0.8 --precursor_mass_tolerance 5 --enzyme 'Trypsin/P' --variable_mods 'Oxidation of M,Acetylation of protein N-term' --fdr_peptide_threshold 0.05 --quantification_fdr 0.01  --max_cpus 8 --max_memory 8GB -profile docker
+nextflow run main.nf --raws 'RAWFOLDER/*.raw' --fasta yeast_UPS.fasta --miscleavages 2 --fragment_mass_tolerance 0.8 \
+--precursor_mass_tolerance 5 --enzyme 'Trypsin/P' --variable_mods 'Oxidation of M,Acetylation of protein N-term' \
+--fdr_peptide_threshold 0.05 --quantification_fdr 0.01 --experiment_design pxd001819.txt --max_cpus 8 --max_memory \
+8GB -profile docker
+
 ```
 
 
