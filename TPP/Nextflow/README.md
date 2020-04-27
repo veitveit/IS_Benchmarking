@@ -43,7 +43,8 @@ Also adjust the parameter values _max_cpus_ and _max_memory_ to the computing po
 nextflow run main.nf --raws 'RAWFOLDER/*.raw' --fasta yeast_UPS.fasta --miscleavages 2 --fragment_mass_tolerance 0.8 \
 --precursor_mass_tolerance 5 --enzyme 'Trypsin/P' --variable_mods 'Oxidation of M,Acetylation of protein N-term' \
 --fdr_peptide_threshold 0.05 --quantification_fdr 0.01 --experiment_design pxd001819.txt --max_cpus 8 --max_memory \
-8GB -profile docker
+8GB -profile docker -with-report -with-trace -with-timeline
+
 
 ```
 
