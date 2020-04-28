@@ -1,0 +1,9 @@
+name: nf-core-maxquant
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - mono=5.14.0.177
+  - maxquant=1.6.10.43
+
