@@ -35,8 +35,8 @@ def helpMessage() {
       --enzyme                          Enzymatic cleavage ('unspecific cleavage', 'Trypsin', see comet enzymes)
       --miscleavages                    Number of allowed miscleavages
       --number_mods                     Maximum number of modifications of PSMs
-      --fixed_mods                      TODO: Not working yet. Fixed modification is always 'Carbamidomethyl (C)'
-      --variable_mods                   TODO: Only variable modifications 'Oxidation (M)' and 'Phosphorylation (STY)' allowed. Separated by commas without additional spaces
+      --fixed_mods                      Not working yet. Fixed modification is always 'Carbamidomethyl (C)'
+      --variable_mods                   Only variable modifications 'Oxidation of M' 'Acetylation of protein N-term' and 'Phosphorylation of STY' allowed. Separated by commas without additional spaces
       --num_hits                        Number of reported hits
      --min_charge                       Minimal precursor charge 
      --max_charge                       Maximal precursor charge 
