@@ -7,10 +7,10 @@ COPY environment.yml /
 RUN conda env create -f /environment.yml && conda clean -a;
 
 
-SHELL ["conda", "run", "-n", "moFF", "/bin/bash", "-c"]
+#SHELL ["conda", "run", "-n", "moFF", "/bin/bash", "-c"]
 
 
 ENV PATH /opt/conda/envs/moFF/bin:$PATH
 
 
-ENTRYPOINT ["conda", "run", "-n", "moFF", "/bin/bash", "-c"]
+#ENTRYPOINT ["conda", "run", "-n", "moFF", "/bin/bash", "-c"]
