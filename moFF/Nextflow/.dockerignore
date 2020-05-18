@@ -1,9 +1,11 @@
-.nextflow*
 .*
+.nextflow*
+.nextflow/
 absence_peak_data/
 conf/
-data/
-data2/
-external_sample_data/
+dag.dot*
+report.html*
 results/
+timeline.html*
+trace.txt*
 work/
