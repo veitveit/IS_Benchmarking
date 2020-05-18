@@ -8,3 +8,4 @@ dependencies:
   - python=3.6
   - moff=2.0.3
   - pandas=0.24.2
+  - brain-isotopic-distribution=1.5.3

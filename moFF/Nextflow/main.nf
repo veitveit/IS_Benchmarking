@@ -110,7 +110,8 @@ process moff_all {
         #python3 "\${moff_filepath}" --loc_out "${params.outdir}" --config_file "${inifile}" --loc_in "${rawrepodir}" --ext "txt"; # --raw_repo "${rawrepodir}"
         #python3 "\${moff_filepath}" --loc_out "${params.outdir}" --loc_in "${rawrepodir}" --mbr only;
         #python3.6 "\${moff_filepath}" --loc_out "${params.outdir}"  --config_file "${inifile}";
-        python3.6 "\${moff_filepath}" --config_file "${inifile}" --peptide_summary 2>&1;
+        #python3.6 "\${moff_filepath}" --config_file "${inifile}" --peptide_summary 2>&1;
+	python3.6 $(which moff_all.py) --config_file "${inifile}" --loc_in ./ --peptide_symmary 2>&1
         """
 }
 
