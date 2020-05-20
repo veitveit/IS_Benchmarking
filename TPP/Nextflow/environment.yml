@@ -5,7 +5,7 @@ channels:
   - defaults
 dependencies:
   - openms=2.4.0
-  - thermorawfileparser=1.1.11
+  - thermorawfileparser=1.2.3
   - tpp=5.0.0
   - comet-ms=2019014
   - r-base=3.6.1
