@@ -1,0 +1,391 @@
+<!doctype html>
+<!--
+  ~ Copyright 2013-2019, Centre for Genomic Regulation (CRG)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script type="text/javascript">
+var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Cscript src='" + prot + "code.jquery.com/jquery-latest.min.js' type='text/javascript' %3E%3C/script%3E"));
+document.write(unescape("%3Cscript src='" + prot + "d3js.org/d3.v3.min.js' charset='utf-8' type='text/javascript' %3E%3C/script%3E"));
+document.write(unescape("%3Cscript src='" + prot + "cdn.rawgit.com/nextflow-io/d3-timeline/82622c4cc35bac7283b3a317826b0709ac1ae476/src/d3-timeline.js' type='text/javascript' %3E%3C/script%3E"));
+</script>
+<style type="text/css">
+* {
+  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.axis path,
+.axis line {
+fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-size: 10px;
+}
+
+div#timeline g text {
+  font-size: 13px;
+}
+
+text.timeline-label {
+  font-size: 13px;
+}
+
+#timeline2 .axis {
+  transform: translate(0px,30px);
+  -ms-transform: translate(0px,30px); /* IE 9 */
+  -webkit-transform: translate(0px,30px); /* Safari and Chrome */
+  -o-transform: translate(0px,30px); /* Opera */
+  -moz-transform: translate(0px,30px); /* Firefox */
+}
+
+.coloredDiv {
+  height:20px; width:20px; float:left;
+}
+
+#footer {
+  padding-top: 3em; color: #bfbfbf; font-size: 13px;
+}
+
+#footer a:visited {
+  color: #bfbfbf;
+  text-decoration: underline;
+}
+</style>
+<script type="text/javascript">
+var handler=null;
+// see https://github.com/mbostock/d3/wiki/Ordinal-Scales#category20c
+var colors = d3.scale.category20c().domain(d3.range(0,20)).range()
+
+function c0(index) { return "#9c9c9c"; }
+function c1(index) { return "#bdbdbd"; }
+function c2(index) { return colors[index % 16]; } // <-- note: uses only the first 16 colors
+
+var elapsed="1h 47m 1s"
+var beginningMillis=1590347361150;
+var endingMillis=1590353781665;
+var data=[
+{"label": "sdrf_parsing (1)", "times": [{"starting_time": 1590347362579, "ending_time": 1590347362590, "color":c1(0)}, {"starting_time": 1590347362590, "ending_time": 1590347363218, "color":c2(0), "label": "2.3s \/ 13.9 MB"}, {"starting_time": 1590347363218, "ending_time": 1590347364900, "color":c1(0)}]},
+{"label": "get_software_versions", "times": [{"starting_time": 1590347362720, "ending_time": 1590347362789, "color":c1(1)}, {"starting_time": 1590347362789, "ending_time": 1590347364543, "color":c2(1), "label": "3.3s \/ 6.2 MB"}, {"starting_time": 1590347364543, "ending_time": 1590347366056, "color":c1(1)}]},
+{"label": "mzml_indexing (1)", "times": [{"starting_time": 1590347365017, "ending_time": 1590347365100, "color":c1(2)}, {"starting_time": 1590347365100, "ending_time": 1590347411814, "color":c2(2), "label": "48.4s \/ 906.6 MB"}, {"starting_time": 1590347411814, "ending_time": 1590347413450, "color":c1(2)}]},
+{"label": "mzml_indexing (2)", "times": [{"starting_time": 1590347365042, "ending_time": 1590347365103, "color":c1(2)}, {"starting_time": 1590347365103, "ending_time": 1590347412510, "color":c2(2), "label": "49.4s \/ 907.5 MB"}, {"starting_time": 1590347412510, "ending_time": 1590347414408, "color":c1(2)}]},
+{"label": "mzml_indexing (3)", "times": [{"starting_time": 1590347365059, "ending_time": 1590347365106, "color":c1(2)}, {"starting_time": 1590347365106, "ending_time": 1590347412665, "color":c2(2), "label": "49.5s \/ 911.7 MB"}, {"starting_time": 1590347412665, "ending_time": 1590347414587, "color":c1(2)}]},
+{"label": "mzml_indexing (4)", "times": [{"starting_time": 1590347366066, "ending_time": 1590347366156, "color":c1(2)}, {"starting_time": 1590347366156, "ending_time": 1590347410423, "color":c2(2), "label": "46.1s \/ 872.1 MB"}, {"starting_time": 1590347410423, "ending_time": 1590347412148, "color":c1(2)}]},
+{"label": "mzml_indexing (5)", "times": [{"starting_time": 1590347412159, "ending_time": 1590347412248, "color":c1(2)}, {"starting_time": 1590347412248, "ending_time": 1590347457862, "color":c2(2), "label": "47.4s \/ 883.9 MB"}, {"starting_time": 1590347457862, "ending_time": 1590347459530, "color":c1(2)}]},
+{"label": "mzml_indexing (6)", "times": [{"starting_time": 1590347413460, "ending_time": 1590347413550, "color":c1(2)}, {"starting_time": 1590347413550, "ending_time": 1590347459484, "color":c2(2), "label": "47.7s \/ 887.4 MB"}, {"starting_time": 1590347459484, "ending_time": 1590347461155, "color":c1(2)}]},
+{"label": "mzml_indexing (7)", "times": [{"starting_time": 1590347414420, "ending_time": 1590347414510, "color":c1(2)}, {"starting_time": 1590347414510, "ending_time": 1590347462648, "color":c2(2), "label": "50.3s \/ 910.1 MB"}, {"starting_time": 1590347462648, "ending_time": 1590347464726, "color":c1(2)}]},
+{"label": "mzml_indexing (8)", "times": [{"starting_time": 1590347414594, "ending_time": 1590347414688, "color":c1(2)}, {"starting_time": 1590347414688, "ending_time": 1590347462865, "color":c2(2), "label": "50s \/ 914 MB"}, {"starting_time": 1590347462865, "ending_time": 1590347464625, "color":c1(2)}]},
+{"label": "mzml_indexing (9)", "times": [{"starting_time": 1590347459536, "ending_time": 1590347459630, "color":c1(2)}, {"starting_time": 1590347459630, "ending_time": 1590347507903, "color":c2(2), "label": "50.1s \/ 917.1 MB"}, {"starting_time": 1590347507903, "ending_time": 1590347509666, "color":c1(2)}]},
+{"label": "mzml_indexing (10)", "times": [{"starting_time": 1590347461161, "ending_time": 1590347461255, "color":c1(2)}, {"starting_time": 1590347461255, "ending_time": 1590347507875, "color":c2(2), "label": "48.5s \/ 894.8 MB"}, {"starting_time": 1590347507875, "ending_time": 1590347509705, "color":c1(2)}]},
+{"label": "mzml_indexing (11)", "times": [{"starting_time": 1590347464637, "ending_time": 1590347464737, "color":c1(2)}, {"starting_time": 1590347464737, "ending_time": 1590347510567, "color":c2(2), "label": "47.8s \/ 893.9 MB"}, {"starting_time": 1590347510567, "ending_time": 1590347512440, "color":c1(2)}]},
+{"label": "mzml_indexing (12)", "times": [{"starting_time": 1590347464732, "ending_time": 1590347464826, "color":c1(2)}, {"starting_time": 1590347464826, "ending_time": 1590347511815, "color":c2(2), "label": "48.8s \/ 889.3 MB"}, {"starting_time": 1590347511815, "ending_time": 1590347513576, "color":c1(2)}]},
+{"label": "mzml_indexing (13)", "times": [{"starting_time": 1590347509699, "ending_time": 1590347509765, "color":c1(2)}, {"starting_time": 1590347509765, "ending_time": 1590347555968, "color":c2(2), "label": "48.2s \/ 881.6 MB"}, {"starting_time": 1590347555968, "ending_time": 1590347557943, "color":c1(2)}]},
+{"label": "mzml_indexing (14)", "times": [{"starting_time": 1590347509720, "ending_time": 1590347509768, "color":c1(2)}, {"starting_time": 1590347509768, "ending_time": 1590347555629, "color":c2(2), "label": "47.9s \/ 880.7 MB"}, {"starting_time": 1590347555629, "ending_time": 1590347557669, "color":c1(2)}]},
+{"label": "mzml_indexing (15)", "times": [{"starting_time": 1590347512465, "ending_time": 1590347512540, "color":c1(2)}, {"starting_time": 1590347512540, "ending_time": 1590347558812, "color":c2(2), "label": "48s \/ 889.6 MB"}, {"starting_time": 1590347558812, "ending_time": 1590347560489, "color":c1(2)}]},
+{"label": "mzml_indexing (16)", "times": [{"starting_time": 1590347513583, "ending_time": 1590347513675, "color":c1(2)}, {"starting_time": 1590347513675, "ending_time": 1590347562024, "color":c2(2), "label": "50s \/ 921.2 MB"}, {"starting_time": 1590347562024, "ending_time": 1590347563570, "color":c1(2)}]},
+{"label": "mzml_indexing (17)", "times": [{"starting_time": 1590347557678, "ending_time": 1590347557770, "color":c1(2)}, {"starting_time": 1590347557770, "ending_time": 1590347605938, "color":c2(2), "label": "50.3s \/ 922.7 MB"}, {"starting_time": 1590347605938, "ending_time": 1590347608003, "color":c1(2)}]},
+{"label": "mzml_indexing (18)", "times": [{"starting_time": 1590347557950, "ending_time": 1590347558042, "color":c1(2)}, {"starting_time": 1590347558042, "ending_time": 1590347606458, "color":c2(2), "label": "50.3s \/ 928.2 MB"}, {"starting_time": 1590347606458, "ending_time": 1590347608270, "color":c1(2)}]},
+{"label": "mzml_indexing (19)", "times": [{"starting_time": 1590347560497, "ending_time": 1590347560589, "color":c1(2)}, {"starting_time": 1590347560589, "ending_time": 1590347607276, "color":c2(2), "label": "48.4s \/ 887.6 MB"}, {"starting_time": 1590347607276, "ending_time": 1590347608932, "color":c1(2)}]},
+{"label": "mzml_indexing (20)", "times": [{"starting_time": 1590347563578, "ending_time": 1590347563670, "color":c1(2)}, {"starting_time": 1590347563670, "ending_time": 1590347609627, "color":c2(2), "label": "47.6s \/ 888.1 MB"}, {"starting_time": 1590347609627, "ending_time": 1590347611225, "color":c1(2)}]},
+{"label": "mzml_indexing (21)", "times": [{"starting_time": 1590347608062, "ending_time": 1590347608103, "color":c1(2)}, {"starting_time": 1590347608103, "ending_time": 1590347654853, "color":c2(2), "label": "49s \/ 895.1 MB"}, {"starting_time": 1590347654853, "ending_time": 1590347657077, "color":c1(2)}]},
+{"label": "mzml_indexing (22)", "times": [{"starting_time": 1590347608275, "ending_time": 1590347608370, "color":c1(2)}, {"starting_time": 1590347608370, "ending_time": 1590347654818, "color":c2(2), "label": "48.6s \/ 897.1 MB"}, {"starting_time": 1590347654818, "ending_time": 1590347656839, "color":c1(2)}]},
+{"label": "mzml_indexing (23)", "times": [{"starting_time": 1590347608940, "ending_time": 1590347609031, "color":c1(2)}, {"starting_time": 1590347609031, "ending_time": 1590347655237, "color":c2(2), "label": "48s \/ 904.9 MB"}, {"starting_time": 1590347655237, "ending_time": 1590347656920, "color":c1(2)}]},
+{"label": "mzml_indexing (24)", "times": [{"starting_time": 1590347611234, "ending_time": 1590347611326, "color":c1(2)}, {"starting_time": 1590347611326, "ending_time": 1590347657687, "color":c2(2), "label": "48s \/ 905 MB"}, {"starting_time": 1590347657687, "ending_time": 1590347659220, "color":c1(2)}]},
+{"label": "mzml_indexing (25)", "times": [{"starting_time": 1590347656874, "ending_time": 1590347656928, "color":c1(2)}, {"starting_time": 1590347656928, "ending_time": 1590347700716, "color":c2(2), "label": "46s \/ 872.3 MB"}, {"starting_time": 1590347700716, "ending_time": 1590347702894, "color":c1(2)}]},
+{"label": "mzml_indexing (26)", "times": [{"starting_time": 1590347656928, "ending_time": 1590347657020, "color":c1(2)}, {"starting_time": 1590347657020, "ending_time": 1590347700579, "color":c2(2), "label": "45.8s \/ 861 MB"}, {"starting_time": 1590347700579, "ending_time": 1590347702771, "color":c1(2)}]},
+{"label": "mzml_indexing (27)", "times": [{"starting_time": 1590347657083, "ending_time": 1590347657177, "color":c1(2)}, {"starting_time": 1590347657177, "ending_time": 1590347701516, "color":c2(2), "label": "46.4s \/ 869.7 MB"}, {"starting_time": 1590347701516, "ending_time": 1590347703469, "color":c1(2)}]},
+{"label": "search_engine_comet (1)", "times": [{"starting_time": 1590347702825, "ending_time": 1590347702871, "color":c1(3)}, {"starting_time": 1590347702871, "ending_time": 1590347770204, "color":c2(3), "label": "1m 9s \/ 2.1 GB"}, {"starting_time": 1590347770204, "ending_time": 1590347772005, "color":c1(3)}]},
+{"label": "search_engine_comet (2)", "times": [{"starting_time": 1590347703477, "ending_time": 1590347703570, "color":c1(3)}, {"starting_time": 1590347703570, "ending_time": 1590347772454, "color":c2(3), "label": "1m 11s \/ 2.1 GB"}, {"starting_time": 1590347772454, "ending_time": 1590347774230, "color":c1(3)}]},
+{"label": "search_engine_comet (3)", "times": [{"starting_time": 1590347772015, "ending_time": 1590347772105, "color":c1(3)}, {"starting_time": 1590347772105, "ending_time": 1590347842947, "color":c2(3), "label": "1m 12s \/ 2.1 GB"}, {"starting_time": 1590347842947, "ending_time": 1590347844427, "color":c1(3)}]},
+{"label": "search_engine_comet (4)", "times": [{"starting_time": 1590347774238, "ending_time": 1590347774331, "color":c1(3)}, {"starting_time": 1590347774331, "ending_time": 1590347843794, "color":c2(3), "label": "1m 11s \/ 2.1 GB"}, {"starting_time": 1590347843794, "ending_time": 1590347845379, "color":c1(3)}]},
+{"label": "search_engine_comet (5)", "times": [{"starting_time": 1590347844436, "ending_time": 1590347844527, "color":c1(3)}, {"starting_time": 1590347844527, "ending_time": 1590347911112, "color":c2(3), "label": "1m 8s \/ 2.1 GB"}, {"starting_time": 1590347911112, "ending_time": 1590347912761, "color":c1(3)}]},
+{"label": "search_engine_comet (6)", "times": [{"starting_time": 1590347845387, "ending_time": 1590347845480, "color":c1(3)}, {"starting_time": 1590347845480, "ending_time": 1590347912696, "color":c2(3), "label": "1m 9s \/ 2.1 GB"}, {"starting_time": 1590347912696, "ending_time": 1590347914386, "color":c1(3)}]},
+{"label": "search_engine_comet (7)", "times": [{"starting_time": 1590347912770, "ending_time": 1590347912862, "color":c1(3)}, {"starting_time": 1590347912862, "ending_time": 1590347985822, "color":c2(3), "label": "1m 15s \/ 2.1 GB"}, {"starting_time": 1590347985822, "ending_time": 1590347987361, "color":c1(3)}]},
+{"label": "search_engine_comet (8)", "times": [{"starting_time": 1590347914395, "ending_time": 1590347914486, "color":c1(3)}, {"starting_time": 1590347914486, "ending_time": 1590347987543, "color":c2(3), "label": "1m 15s \/ 2.1 GB"}, {"starting_time": 1590347987543, "ending_time": 1590347989251, "color":c1(3)}]},
+{"label": "search_engine_comet (9)", "times": [{"starting_time": 1590347987380, "ending_time": 1590347987462, "color":c1(3)}, {"starting_time": 1590347987462, "ending_time": 1590348060107, "color":c2(3), "label": "1m 14s \/ 2.1 GB"}, {"starting_time": 1590348060107, "ending_time": 1590348061751, "color":c1(3)}]},
+{"label": "search_engine_comet (10)", "times": [{"starting_time": 1590347989261, "ending_time": 1590347989350, "color":c1(3)}, {"starting_time": 1590347989350, "ending_time": 1590348056130, "color":c2(3), "label": "1m 9s \/ 2.1 GB"}, {"starting_time": 1590348056130, "ending_time": 1590348057885, "color":c1(3)}]},
+{"label": "search_engine_comet (11)", "times": [{"starting_time": 1590348057895, "ending_time": 1590348057984, "color":c1(3)}, {"starting_time": 1590348057984, "ending_time": 1590348124778, "color":c2(3), "label": "1m 8s \/ 2.1 GB"}, {"starting_time": 1590348124778, "ending_time": 1590348126354, "color":c1(3)}]},
+{"label": "search_engine_comet (12)", "times": [{"starting_time": 1590348061761, "ending_time": 1590348061851, "color":c1(3)}, {"starting_time": 1590348061851, "ending_time": 1590348128396, "color":c2(3), "label": "1m 8s \/ 2.1 GB"}, {"starting_time": 1590348128396, "ending_time": 1590348130217, "color":c1(3)}]},
+{"label": "search_engine_comet (13)", "times": [{"starting_time": 1590348126366, "ending_time": 1590348126454, "color":c1(3)}, {"starting_time": 1590348126454, "ending_time": 1590348193468, "color":c2(3), "label": "1m 9s \/ 2.1 GB"}, {"starting_time": 1590348193468, "ending_time": 1590348195126, "color":c1(3)}]},
+{"label": "search_engine_comet (14)", "times": [{"starting_time": 1590348130230, "ending_time": 1590348130318, "color":c1(3)}, {"starting_time": 1590348130318, "ending_time": 1590348197516, "color":c2(3), "label": "1m 9s \/ 2.1 GB"}, {"starting_time": 1590348197516, "ending_time": 1590348199298, "color":c1(3)}]},
+{"label": "search_engine_comet (15)", "times": [{"starting_time": 1590348195137, "ending_time": 1590348195227, "color":c1(3)}, {"starting_time": 1590348195227, "ending_time": 1590348263136, "color":c2(3), "label": "1m 10s \/ 2.1 GB"}, {"starting_time": 1590348263136, "ending_time": 1590348264821, "color":c1(3)}]},
+{"label": "search_engine_comet (16)", "times": [{"starting_time": 1590348199307, "ending_time": 1590348199398, "color":c1(3)}, {"starting_time": 1590348199398, "ending_time": 1590348273492, "color":c2(3), "label": "1m 16s \/ 2.1 GB"}, {"starting_time": 1590348273492, "ending_time": 1590348275299, "color":c1(3)}]},
+{"label": "search_engine_comet (17)", "times": [{"starting_time": 1590348264845, "ending_time": 1590348264921, "color":c1(3)}, {"starting_time": 1590348264921, "ending_time": 1590348338812, "color":c2(3), "label": "1m 16s \/ 2.1 GB"}, {"starting_time": 1590348338812, "ending_time": 1590348340398, "color":c1(3)}]},
+{"label": "search_engine_comet (18)", "times": [{"starting_time": 1590348275304, "ending_time": 1590348275398, "color":c1(3)}, {"starting_time": 1590348275398, "ending_time": 1590348349020, "color":c2(3), "label": "1m 15s \/ 2.1 GB"}, {"starting_time": 1590348349020, "ending_time": 1590348350719, "color":c1(3)}]},
+{"label": "search_engine_comet (19)", "times": [{"starting_time": 1590348340407, "ending_time": 1590348340498, "color":c1(3)}, {"starting_time": 1590348340498, "ending_time": 1590348407784, "color":c2(3), "label": "1m 9s \/ 2.1 GB"}, {"starting_time": 1590348407784, "ending_time": 1590348409539, "color":c1(3)}]},
+{"label": "search_engine_comet (20)", "times": [{"starting_time": 1590348350728, "ending_time": 1590348350820, "color":c1(3)}, {"starting_time": 1590348350820, "ending_time": 1590348417269, "color":c2(3), "label": "1m 8s \/ 2.1 GB"}, {"starting_time": 1590348417269, "ending_time": 1590348419042, "color":c1(3)}]},
+{"label": "search_engine_comet (21)", "times": [{"starting_time": 1590348409544, "ending_time": 1590348409640, "color":c1(3)}, {"starting_time": 1590348409640, "ending_time": 1590348477140, "color":c2(3), "label": "1m 9s \/ 2.1 GB"}, {"starting_time": 1590348477140, "ending_time": 1590348478879, "color":c1(3)}]},
+{"label": "search_engine_comet (22)", "times": [{"starting_time": 1590348419049, "ending_time": 1590348419142, "color":c1(3)}, {"starting_time": 1590348419142, "ending_time": 1590348486930, "color":c2(3), "label": "1m 10s \/ 2.1 GB"}, {"starting_time": 1590348486930, "ending_time": 1590348488762, "color":c1(3)}]},
+{"label": "search_engine_comet (23)", "times": [{"starting_time": 1590348478888, "ending_time": 1590348478980, "color":c1(3)}, {"starting_time": 1590348478980, "ending_time": 1590348547180, "color":c2(3), "label": "1m 10s \/ 2.1 GB"}, {"starting_time": 1590348547180, "ending_time": 1590348548989, "color":c1(3)}]},
+{"label": "search_engine_comet (24)", "times": [{"starting_time": 1590348488771, "ending_time": 1590348488862, "color":c1(3)}, {"starting_time": 1590348488862, "ending_time": 1590348555549, "color":c2(3), "label": "1m 9s \/ 2.1 GB"}, {"starting_time": 1590348555549, "ending_time": 1590348557376, "color":c1(3)}]},
+{"label": "search_engine_comet (25)", "times": [{"starting_time": 1590348548998, "ending_time": 1590348549090, "color":c1(3)}, {"starting_time": 1590348549090, "ending_time": 1590348616879, "color":c2(3), "label": "1m 10s \/ 2 GB"}, {"starting_time": 1590348616879, "ending_time": 1590348618591, "color":c1(3)}]},
+{"label": "search_engine_comet (26)", "times": [{"starting_time": 1590348557386, "ending_time": 1590348557476, "color":c1(3)}, {"starting_time": 1590348557476, "ending_time": 1590348624732, "color":c2(3), "label": "1m 9s \/ 2 GB"}, {"starting_time": 1590348624732, "ending_time": 1590348626499, "color":c1(3)}]},
+{"label": "search_engine_comet (27)", "times": [{"starting_time": 1590348618600, "ending_time": 1590348618691, "color":c1(3)}, {"starting_time": 1590348618691, "ending_time": 1590348687347, "color":c2(3), "label": "1m 10s \/ 2 GB"}, {"starting_time": 1590348687347, "ending_time": 1590348689045, "color":c1(3)}]},
+{"label": "index_peptides (1)", "times": [{"starting_time": 1590348626504, "ending_time": 1590348626600, "color":c1(4)}, {"starting_time": 1590348626600, "ending_time": 1590348630915, "color":c2(4), "label": "5.9s \/ 179.6 MB"}, {"starting_time": 1590348630915, "ending_time": 1590348632429, "color":c1(4)}]},
+{"label": "index_peptides (2)", "times": [{"starting_time": 1590348626508, "ending_time": 1590348626602, "color":c1(4)}, {"starting_time": 1590348626602, "ending_time": 1590348631323, "color":c2(4), "label": "6.6s \/ 181.3 MB"}, {"starting_time": 1590348631323, "ending_time": 1590348633070, "color":c1(4)}]},
+{"label": "index_peptides (3)", "times": [{"starting_time": 1590348632433, "ending_time": 1590348632529, "color":c1(4)}, {"starting_time": 1590348632529, "ending_time": 1590348637107, "color":c2(4), "label": "6.3s \/ 180.9 MB"}, {"starting_time": 1590348637107, "ending_time": 1590348638726, "color":c1(4)}]},
+{"label": "index_peptides (4)", "times": [{"starting_time": 1590348633076, "ending_time": 1590348633170, "color":c1(4)}, {"starting_time": 1590348633170, "ending_time": 1590348637608, "color":c2(4), "label": "6s \/ 181.1 MB"}, {"starting_time": 1590348637608, "ending_time": 1590348639088, "color":c1(4)}]},
+{"label": "index_peptides (5)", "times": [{"starting_time": 1590348638735, "ending_time": 1590348638826, "color":c1(4)}, {"starting_time": 1590348638826, "ending_time": 1590348643016, "color":c2(4), "label": "6.3s \/ 179.8 MB"}, {"starting_time": 1590348643016, "ending_time": 1590348644993, "color":c1(4)}]},
+{"label": "index_peptides (6)", "times": [{"starting_time": 1590348639098, "ending_time": 1590348639189, "color":c1(4)}, {"starting_time": 1590348639189, "ending_time": 1590348643312, "color":c2(4), "label": "6s \/ 179.7 MB"}, {"starting_time": 1590348643312, "ending_time": 1590348645146, "color":c1(4)}]},
+{"label": "index_peptides (7)", "times": [{"starting_time": 1590348645000, "ending_time": 1590348645092, "color":c1(4)}, {"starting_time": 1590348645092, "ending_time": 1590348649197, "color":c2(4), "label": "6s \/ 180.4 MB"}, {"starting_time": 1590348649197, "ending_time": 1590348650963, "color":c1(4)}]},
+{"label": "index_peptides (8)", "times": [{"starting_time": 1590348645155, "ending_time": 1590348645245, "color":c1(4)}, {"starting_time": 1590348645245, "ending_time": 1590348649304, "color":c2(4), "label": "6.3s \/ 180.4 MB"}, {"starting_time": 1590348649304, "ending_time": 1590348651443, "color":c1(4)}]},
+{"label": "index_peptides (9)", "times": [{"starting_time": 1590348650969, "ending_time": 1590348651063, "color":c1(4)}, {"starting_time": 1590348651063, "ending_time": 1590348655392, "color":c2(4), "label": "6.8s \/ 180.1 MB"}, {"starting_time": 1590348655392, "ending_time": 1590348657734, "color":c1(4)}]},
+{"label": "index_peptides (10)", "times": [{"starting_time": 1590348651448, "ending_time": 1590348651543, "color":c1(4)}, {"starting_time": 1590348651543, "ending_time": 1590348655749, "color":c2(4), "label": "6.2s \/ 180.5 MB"}, {"starting_time": 1590348655749, "ending_time": 1590348657646, "color":c1(4)}]},
+{"label": "index_peptides (11)", "times": [{"starting_time": 1590348657653, "ending_time": 1590348657743, "color":c1(4)}, {"starting_time": 1590348657743, "ending_time": 1590348662157, "color":c2(4), "label": "6.4s \/ 180.1 MB"}, {"starting_time": 1590348662157, "ending_time": 1590348664046, "color":c1(4)}]},
+{"label": "index_peptides (12)", "times": [{"starting_time": 1590348657739, "ending_time": 1590348657834, "color":c1(4)}, {"starting_time": 1590348657834, "ending_time": 1590348662323, "color":c2(4), "label": "6.5s \/ 180.4 MB"}, {"starting_time": 1590348662323, "ending_time": 1590348664246, "color":c1(4)}]},
+{"label": "index_peptides (13)", "times": [{"starting_time": 1590348664052, "ending_time": 1590348664146, "color":c1(4)}, {"starting_time": 1590348664146, "ending_time": 1590348668618, "color":c2(4), "label": "6.4s \/ 179.4 MB"}, {"starting_time": 1590348668618, "ending_time": 1590348670405, "color":c1(4)}]},
+{"label": "index_peptides (14)", "times": [{"starting_time": 1590348664250, "ending_time": 1590348664346, "color":c1(4)}, {"starting_time": 1590348664346, "ending_time": 1590348668422, "color":c2(4), "label": "5.8s \/ 179.9 MB"}, {"starting_time": 1590348668422, "ending_time": 1590348670037, "color":c1(4)}]},
+{"label": "index_peptides (15)", "times": [{"starting_time": 1590348670041, "ending_time": 1590348670137, "color":c1(4)}, {"starting_time": 1590348670137, "ending_time": 1590348674187, "color":c2(4), "label": "6.2s \/ 180.1 MB"}, {"starting_time": 1590348674187, "ending_time": 1590348676278, "color":c1(4)}]},
+{"label": "index_peptides (16)", "times": [{"starting_time": 1590348670415, "ending_time": 1590348670505, "color":c1(4)}, {"starting_time": 1590348670505, "ending_time": 1590348674559, "color":c2(4), "label": "6s \/ 180.5 MB"}, {"starting_time": 1590348674559, "ending_time": 1590348676453, "color":c1(4)}]},
+{"label": "index_peptides (17)", "times": [{"starting_time": 1590348676295, "ending_time": 1590348676378, "color":c1(4)}, {"starting_time": 1590348676378, "ending_time": 1590348680569, "color":c2(4), "label": "6.7s \/ 180.3 MB"}, {"starting_time": 1590348680569, "ending_time": 1590348682981, "color":c1(4)}]},
+{"label": "index_peptides (18)", "times": [{"starting_time": 1590348676466, "ending_time": 1590348676553, "color":c1(4)}, {"starting_time": 1590348676553, "ending_time": 1590348680769, "color":c2(4), "label": "6.7s \/ 180.3 MB"}, {"starting_time": 1590348680769, "ending_time": 1590348683137, "color":c1(4)}]},
+{"label": "index_peptides (19)", "times": [{"starting_time": 1590348682988, "ending_time": 1590348683081, "color":c1(4)}, {"starting_time": 1590348683081, "ending_time": 1590348687010, "color":c2(4), "label": "6.4s \/ 179.7 MB"}, {"starting_time": 1590348687010, "ending_time": 1590348689396, "color":c1(4)}]},
+{"label": "index_peptides (20)", "times": [{"starting_time": 1590348683145, "ending_time": 1590348683238, "color":c1(4)}, {"starting_time": 1590348683238, "ending_time": 1590348687252, "color":c2(4), "label": "6.3s \/ 180.6 MB"}, {"starting_time": 1590348687252, "ending_time": 1590348689489, "color":c1(4)}]},
+{"label": "index_peptides (21)", "times": [{"starting_time": 1590348689053, "ending_time": 1590348689146, "color":c1(4)}, {"starting_time": 1590348689146, "ending_time": 1590348693178, "color":c2(4), "label": "6.5s \/ 179.8 MB"}, {"starting_time": 1590348693178, "ending_time": 1590348695523, "color":c1(4)}]},
+{"label": "index_peptides (22)", "times": [{"starting_time": 1590348689059, "ending_time": 1590348689149, "color":c1(4)}, {"starting_time": 1590348689149, "ending_time": 1590348693206, "color":c2(4), "label": "6.1s \/ 180.8 MB"}, {"starting_time": 1590348693206, "ending_time": 1590348695161, "color":c1(4)}]},
+{"label": "index_peptides (23)", "times": [{"starting_time": 1590348689404, "ending_time": 1590348689493, "color":c1(4)}, {"starting_time": 1590348689493, "ending_time": 1590348693588, "color":c2(4), "label": "6.3s \/ 180.4 MB"}, {"starting_time": 1590348693588, "ending_time": 1590348695719, "color":c1(4)}]},
+{"label": "index_peptides (24)", "times": [{"starting_time": 1590348689495, "ending_time": 1590348689589, "color":c1(4)}, {"starting_time": 1590348689589, "ending_time": 1590348693864, "color":c2(4), "label": "6.4s \/ 180.1 MB"}, {"starting_time": 1590348693864, "ending_time": 1590348695918, "color":c1(4)}]},
+{"label": "index_peptides (25)", "times": [{"starting_time": 1590348695167, "ending_time": 1590348695260, "color":c1(4)}, {"starting_time": 1590348695260, "ending_time": 1590348700105, "color":c2(4), "label": "7s \/ 182.7 MB"}, {"starting_time": 1590348700105, "ending_time": 1590348702164, "color":c1(4)}]},
+{"label": "index_peptides (26)", "times": [{"starting_time": 1590348695532, "ending_time": 1590348695623, "color":c1(4)}, {"starting_time": 1590348695623, "ending_time": 1590348700261, "color":c2(4), "label": "7.1s \/ 186.4 MB"}, {"starting_time": 1590348700261, "ending_time": 1590348702610, "color":c1(4)}]},
+{"label": "extract_percolator_features (1)", "times": [{"starting_time": 1590348695727, "ending_time": 1590348695818, "color":c1(5)}, {"starting_time": 1590348695818, "ending_time": 1590348700959, "color":c2(5), "label": "7.4s \/ 134.1 MB"}, {"starting_time": 1590348700959, "ending_time": 1590348703127, "color":c1(5)}]},
+{"label": "extract_percolator_features (2)", "times": [{"starting_time": 1590348695735, "ending_time": 1590348695821, "color":c1(5)}, {"starting_time": 1590348695821, "ending_time": 1590348701093, "color":c2(5), "label": "8.5s \/ 136.8 MB"}, {"starting_time": 1590348701093, "ending_time": 1590348704263, "color":c1(5)}]},
+{"label": "extract_percolator_features (3)", "times": [{"starting_time": 1590348695743, "ending_time": 1590348695822, "color":c1(5)}, {"starting_time": 1590348695822, "ending_time": 1590348701225, "color":c2(5), "label": "8.6s \/ 135.7 MB"}, {"starting_time": 1590348701225, "ending_time": 1590348704363, "color":c1(5)}]},
+{"label": "extract_percolator_features (4)", "times": [{"starting_time": 1590348695753, "ending_time": 1590348695823, "color":c1(5)}, {"starting_time": 1590348695823, "ending_time": 1590348701107, "color":c2(5), "label": "8.7s \/ 136.3 MB"}, {"starting_time": 1590348701107, "ending_time": 1590348704443, "color":c1(5)}]},
+{"label": "extract_percolator_features (5)", "times": [{"starting_time": 1590348695925, "ending_time": 1590348696018, "color":c1(5)}, {"starting_time": 1590348696018, "ending_time": 1590348701170, "color":c2(5), "label": "8.7s \/ 134 MB"}, {"starting_time": 1590348701170, "ending_time": 1590348704635, "color":c1(5)}]},
+{"label": "extract_percolator_features (6)", "times": [{"starting_time": 1590348695931, "ending_time": 1590348696020, "color":c1(5)}, {"starting_time": 1590348696020, "ending_time": 1590348701115, "color":c2(5), "label": "8.2s \/ 134.5 MB"}, {"starting_time": 1590348701115, "ending_time": 1590348704171, "color":c1(5)}]},
+{"label": "extract_percolator_features (7)", "times": [{"starting_time": 1590348695936, "ending_time": 1590348696022, "color":c1(5)}, {"starting_time": 1590348696022, "ending_time": 1590348701460, "color":c2(5), "label": "8.7s \/ 135.5 MB"}, {"starting_time": 1590348701460, "ending_time": 1590348704643, "color":c1(5)}]},
+{"label": "extract_percolator_features (8)", "times": [{"starting_time": 1590348695941, "ending_time": 1590348696024, "color":c1(5)}, {"starting_time": 1590348696024, "ending_time": 1590348701331, "color":c2(5), "label": "8.8s \/ 136.3 MB"}, {"starting_time": 1590348701331, "ending_time": 1590348704721, "color":c1(5)}]},
+{"label": "extract_percolator_features (9)", "times": [{"starting_time": 1590348702170, "ending_time": 1590348702263, "color":c1(5)}, {"starting_time": 1590348702263, "ending_time": 1590348707584, "color":c2(5), "label": "8.6s \/ 135.6 MB"}, {"starting_time": 1590348707584, "ending_time": 1590348710817, "color":c1(5)}]},
+{"label": "extract_percolator_features (10)", "times": [{"starting_time": 1590348702177, "ending_time": 1590348702266, "color":c1(5)}, {"starting_time": 1590348702266, "ending_time": 1590348707549, "color":c2(5), "label": "7.6s \/ 134.8 MB"}, {"starting_time": 1590348707549, "ending_time": 1590348709760, "color":c1(5)}]},
+{"label": "extract_percolator_features (11)", "times": [{"starting_time": 1590348702182, "ending_time": 1590348702268, "color":c1(5)}, {"starting_time": 1590348702268, "ending_time": 1590348707547, "color":c2(5), "label": "8.6s \/ 135 MB"}, {"starting_time": 1590348707547, "ending_time": 1590348710748, "color":c1(5)}]},
+{"label": "extract_percolator_features (12)", "times": [{"starting_time": 1590348702187, "ending_time": 1590348702271, "color":c1(5)}, {"starting_time": 1590348702271, "ending_time": 1590348707523, "color":c2(5), "label": "8.4s \/ 136 MB"}, {"starting_time": 1590348707523, "ending_time": 1590348710548, "color":c1(5)}]},
+{"label": "extract_percolator_features (13)", "times": [{"starting_time": 1590348702614, "ending_time": 1590348702711, "color":c1(5)}, {"starting_time": 1590348702711, "ending_time": 1590348708108, "color":c2(5), "label": "9s \/ 133.8 MB"}, {"starting_time": 1590348708108, "ending_time": 1590348711581, "color":c1(5)}]},
+{"label": "extract_percolator_features (14)", "times": [{"starting_time": 1590348702620, "ending_time": 1590348702712, "color":c1(5)}, {"starting_time": 1590348702712, "ending_time": 1590348708014, "color":c2(5), "label": "8.9s \/ 134.5 MB"}, {"starting_time": 1590348708014, "ending_time": 1590348711492, "color":c1(5)}]},
+{"label": "extract_percolator_features (15)", "times": [{"starting_time": 1590348702626, "ending_time": 1590348702714, "color":c1(5)}, {"starting_time": 1590348702714, "ending_time": 1590348708039, "color":c2(5), "label": "9.1s \/ 135.1 MB"}, {"starting_time": 1590348708039, "ending_time": 1590348711744, "color":c1(5)}]},
+{"label": "extract_percolator_features (16)", "times": [{"starting_time": 1590348703133, "ending_time": 1590348703227, "color":c1(5)}, {"starting_time": 1590348703227, "ending_time": 1590348708867, "color":c2(5), "label": "11.2s \/ 136.3 MB"}, {"starting_time": 1590348708867, "ending_time": 1590348714311, "color":c1(5)}]},
+{"label": "extract_percolator_features (17)", "times": [{"starting_time": 1590348704181, "ending_time": 1590348704276, "color":c1(5)}, {"starting_time": 1590348704276, "ending_time": 1590348709889, "color":c2(5), "label": "9.2s \/ 135.4 MB"}, {"starting_time": 1590348709889, "ending_time": 1590348713356, "color":c1(5)}]},
+{"label": "extract_percolator_features (18)", "times": [{"starting_time": 1590348704275, "ending_time": 1590348704368, "color":c1(5)}, {"starting_time": 1590348704368, "ending_time": 1590348709837, "color":c2(5), "label": "9.9s \/ 135.5 MB"}, {"starting_time": 1590348709837, "ending_time": 1590348714148, "color":c1(5)}]},
+{"label": "extract_percolator_features (19)", "times": [{"starting_time": 1590348704368, "ending_time": 1590348704450, "color":c1(5)}, {"starting_time": 1590348704450, "ending_time": 1590348710014, "color":c2(5), "label": "9.8s \/ 135.1 MB"}, {"starting_time": 1590348710014, "ending_time": 1590348714215, "color":c1(5)}]},
+{"label": "extract_percolator_features (20)", "times": [{"starting_time": 1590348704449, "ending_time": 1590348704543, "color":c1(5)}, {"starting_time": 1590348704543, "ending_time": 1590348710197, "color":c2(5), "label": "9.9s \/ 135.5 MB"}, {"starting_time": 1590348710197, "ending_time": 1590348714372, "color":c1(5)}]},
+{"label": "extract_percolator_features (21)", "times": [{"starting_time": 1590348704644, "ending_time": 1590348704726, "color":c1(5)}, {"starting_time": 1590348704726, "ending_time": 1590348710365, "color":c2(5), "label": "8.8s \/ 136 MB"}, {"starting_time": 1590348710365, "ending_time": 1590348713470, "color":c1(5)}]},
+{"label": "extract_percolator_features (22)", "times": [{"starting_time": 1590348704650, "ending_time": 1590348704729, "color":c1(5)}, {"starting_time": 1590348704729, "ending_time": 1590348710275, "color":c2(5), "label": "9.4s \/ 134.6 MB"}, {"starting_time": 1590348710275, "ending_time": 1590348714029, "color":c1(5)}]},
+{"label": "extract_percolator_features (23)", "times": [{"starting_time": 1590348704726, "ending_time": 1590348704821, "color":c1(5)}, {"starting_time": 1590348704821, "ending_time": 1590348710490, "color":c2(5), "label": "9.8s \/ 135.4 MB"}, {"starting_time": 1590348710490, "ending_time": 1590348714535, "color":c1(5)}]},
+{"label": "extract_percolator_features (24)", "times": [{"starting_time": 1590348709773, "ending_time": 1590348709860, "color":c1(5)}, {"starting_time": 1590348709860, "ending_time": 1590348714593, "color":c2(5), "label": "7.7s \/ 135.5 MB"}, {"starting_time": 1590348714593, "ending_time": 1590348717483, "color":c1(5)}]},
+{"label": "extract_percolator_features (25)", "times": [{"starting_time": 1590348710554, "ending_time": 1590348710648, "color":c1(5)}, {"starting_time": 1590348710648, "ending_time": 1590348715323, "color":c2(5), "label": "7.2s \/ 133.2 MB"}, {"starting_time": 1590348715323, "ending_time": 1590348717794, "color":c1(5)}]},
+{"label": "extract_percolator_features (26)", "times": [{"starting_time": 1590348710757, "ending_time": 1590348710833, "color":c1(5)}, {"starting_time": 1590348710833, "ending_time": 1590348715515, "color":c2(5), "label": "8.1s \/ 133.3 MB"}, {"starting_time": 1590348715515, "ending_time": 1590348718807, "color":c1(5)}]},
+{"label": "index_peptides (27)", "times": [{"starting_time": 1590348711586, "ending_time": 1590348711681, "color":c1(4)}, {"starting_time": 1590348711681, "ending_time": 1590348715850, "color":c2(4), "label": "6.8s \/ 181.1 MB"}, {"starting_time": 1590348715850, "ending_time": 1590348718359, "color":c1(4)}]},
+{"label": "percolator (1)", "times": [{"starting_time": 1590348714379, "ending_time": 1590348714471, "color":c1(6)}, {"starting_time": 1590348714471, "ending_time": 1590348727622, "color":c2(6), "label": "15.4s \/ 196.7 MB"}, {"starting_time": 1590348727622, "ending_time": 1590348729820, "color":c1(6)}]},
+{"label": "percolator (2)", "times": [{"starting_time": 1590348718815, "ending_time": 1590348718907, "color":c1(6)}, {"starting_time": 1590348718907, "ending_time": 1590348730660, "color":c2(6), "label": "13.4s \/ 199.2 MB"}, {"starting_time": 1590348730660, "ending_time": 1590348732229, "color":c1(6)}]},
+{"label": "percolator (3)", "times": [{"starting_time": 1590348729827, "ending_time": 1590348729920, "color":c1(6)}, {"starting_time": 1590348729920, "ending_time": 1590348742406, "color":c2(6), "label": "14.1s \/ 199.3 MB"}, {"starting_time": 1590348742406, "ending_time": 1590348743976, "color":c1(6)}]},
+{"label": "percolator (4)", "times": [{"starting_time": 1590348732235, "ending_time": 1590348732329, "color":c1(6)}, {"starting_time": 1590348732329, "ending_time": 1590348744431, "color":c2(6), "label": "13.7s \/ 198.1 MB"}, {"starting_time": 1590348744431, "ending_time": 1590348745964, "color":c1(6)}]},
+{"label": "percolator (5)", "times": [{"starting_time": 1590348743983, "ending_time": 1590348744077, "color":c1(6)}, {"starting_time": 1590348744077, "ending_time": 1590348756175, "color":c2(6), "label": "13.7s \/ 200.7 MB"}, {"starting_time": 1590348756175, "ending_time": 1590348757706, "color":c1(6)}]},
+{"label": "percolator (6)", "times": [{"starting_time": 1590348745971, "ending_time": 1590348746064, "color":c1(6)}, {"starting_time": 1590348746064, "ending_time": 1590348757796, "color":c2(6), "label": "13.3s \/ 196.7 MB"}, {"starting_time": 1590348757796, "ending_time": 1590348759286, "color":c1(6)}]},
+{"label": "percolator (7)", "times": [{"starting_time": 1590348757712, "ending_time": 1590348757806, "color":c1(6)}, {"starting_time": 1590348757806, "ending_time": 1590348770504, "color":c2(6), "label": "14.3s \/ 203.1 MB"}, {"starting_time": 1590348770504, "ending_time": 1590348771987, "color":c1(6)}]},
+{"label": "percolator (8)", "times": [{"starting_time": 1590348759293, "ending_time": 1590348759387, "color":c1(6)}, {"starting_time": 1590348759387, "ending_time": 1590348771639, "color":c2(6), "label": "13.9s \/ 200 MB"}, {"starting_time": 1590348771639, "ending_time": 1590348773183, "color":c1(6)}]},
+{"label": "percolator (9)", "times": [{"starting_time": 1590348771994, "ending_time": 1590348772087, "color":c1(6)}, {"starting_time": 1590348772087, "ending_time": 1590348784235, "color":c2(6), "label": "13.8s \/ 202.4 MB"}, {"starting_time": 1590348784235, "ending_time": 1590348785771, "color":c1(6)}]},
+{"label": "percolator (10)", "times": [{"starting_time": 1590348773191, "ending_time": 1590348773283, "color":c1(6)}, {"starting_time": 1590348773283, "ending_time": 1590348785523, "color":c2(6), "label": "13.8s \/ 197.8 MB"}, {"starting_time": 1590348785523, "ending_time": 1590348787036, "color":c1(6)}]},
+{"label": "percolator (11)", "times": [{"starting_time": 1590348785777, "ending_time": 1590348785871, "color":c1(6)}, {"starting_time": 1590348785871, "ending_time": 1590348798393, "color":c2(6), "label": "14.1s \/ 198 MB"}, {"starting_time": 1590348798393, "ending_time": 1590348799897, "color":c1(6)}]},
+{"label": "percolator (12)", "times": [{"starting_time": 1590348787043, "ending_time": 1590348787136, "color":c1(6)}, {"starting_time": 1590348787136, "ending_time": 1590348799728, "color":c2(6), "label": "14.3s \/ 202 MB"}, {"starting_time": 1590348799728, "ending_time": 1590348801294, "color":c1(6)}]},
+{"label": "percolator (13)", "times": [{"starting_time": 1590348799905, "ending_time": 1590348799997, "color":c1(6)}, {"starting_time": 1590348799997, "ending_time": 1590348811799, "color":c2(6), "label": "13.3s \/ 195.5 MB"}, {"starting_time": 1590348811799, "ending_time": 1590348813201, "color":c1(6)}]},
+{"label": "percolator (14)", "times": [{"starting_time": 1590348801301, "ending_time": 1590348801394, "color":c1(6)}, {"starting_time": 1590348801394, "ending_time": 1590348813429, "color":c2(6), "label": "13.6s \/ 197.8 MB"}, {"starting_time": 1590348813429, "ending_time": 1590348814948, "color":c1(6)}]},
+{"label": "percolator (15)", "times": [{"starting_time": 1590348813210, "ending_time": 1590348813302, "color":c1(6)}, {"starting_time": 1590348813302, "ending_time": 1590348825341, "color":c2(6), "label": "13.7s \/ 200.1 MB"}, {"starting_time": 1590348825341, "ending_time": 1590348826870, "color":c1(6)}]},
+{"label": "percolator (16)", "times": [{"starting_time": 1590348814955, "ending_time": 1590348815048, "color":c1(6)}, {"starting_time": 1590348815048, "ending_time": 1590348826834, "color":c2(6), "label": "13.4s \/ 197.9 MB"}, {"starting_time": 1590348826834, "ending_time": 1590348828363, "color":c1(6)}]},
+{"label": "percolator (17)", "times": [{"starting_time": 1590348826877, "ending_time": 1590348826970, "color":c1(6)}, {"starting_time": 1590348826970, "ending_time": 1590348838958, "color":c2(6), "label": "13.6s \/ 200.4 MB"}, {"starting_time": 1590348838958, "ending_time": 1590348840457, "color":c1(6)}]},
+{"label": "percolator (18)", "times": [{"starting_time": 1590348828370, "ending_time": 1590348828463, "color":c1(6)}, {"starting_time": 1590348828463, "ending_time": 1590348840775, "color":c2(6), "label": "13.9s \/ 199 MB"}, {"starting_time": 1590348840775, "ending_time": 1590348842302, "color":c1(6)}]},
+{"label": "percolator (19)", "times": [{"starting_time": 1590348840466, "ending_time": 1590348840556, "color":c1(6)}, {"starting_time": 1590348840556, "ending_time": 1590348852454, "color":c2(6), "label": "13.6s \/ 202.6 MB"}, {"starting_time": 1590348852454, "ending_time": 1590348854048, "color":c1(6)}]},
+{"label": "percolator (20)", "times": [{"starting_time": 1590348842310, "ending_time": 1590348842402, "color":c1(6)}, {"starting_time": 1590348842402, "ending_time": 1590348854053, "color":c2(6), "label": "13.3s \/ 198.2 MB"}, {"starting_time": 1590348854053, "ending_time": 1590348855612, "color":c1(6)}]},
+{"label": "percolator (21)", "times": [{"starting_time": 1590348854056, "ending_time": 1590348854148, "color":c1(6)}, {"starting_time": 1590348854148, "ending_time": 1590348866779, "color":c2(6), "label": "14.3s \/ 203.2 MB"}, {"starting_time": 1590348866779, "ending_time": 1590348868338, "color":c1(6)}]},
+{"label": "percolator (22)", "times": [{"starting_time": 1590348855618, "ending_time": 1590348855712, "color":c1(6)}, {"starting_time": 1590348855712, "ending_time": 1590348867773, "color":c2(6), "label": "13.7s \/ 198 MB"}, {"starting_time": 1590348867773, "ending_time": 1590348869316, "color":c1(6)}]},
+{"label": "percolator (23)", "times": [{"starting_time": 1590348868343, "ending_time": 1590348868438, "color":c1(6)}, {"starting_time": 1590348868438, "ending_time": 1590348880769, "color":c2(6), "label": "14s \/ 199.3 MB"}, {"starting_time": 1590348880769, "ending_time": 1590348882334, "color":c1(6)}]},
+{"label": "percolator (24)", "times": [{"starting_time": 1590348869324, "ending_time": 1590348869416, "color":c1(6)}, {"starting_time": 1590348869416, "ending_time": 1590348882250, "color":c2(6), "label": "14.5s \/ 200.6 MB"}, {"starting_time": 1590348882250, "ending_time": 1590348883830, "color":c1(6)}]},
+{"label": "percolator (25)", "times": [{"starting_time": 1590348882339, "ending_time": 1590348882434, "color":c1(6)}, {"starting_time": 1590348882434, "ending_time": 1590348897053, "color":c2(6), "label": "16.4s \/ 200.5 MB"}, {"starting_time": 1590348897053, "ending_time": 1590348898693, "color":c1(6)}]},
+{"label": "extract_percolator_features (27)", "times": [{"starting_time": 1590348883837, "ending_time": 1590348883930, "color":c1(5)}, {"starting_time": 1590348883930, "ending_time": 1590348888726, "color":c2(5), "label": "6.6s \/ 132.8 MB"}, {"starting_time": 1590348888726, "ending_time": 1590348890397, "color":c1(5)}]},
+{"label": "idfilter (1)", "times": [{"starting_time": 1590348883843, "ending_time": 1590348883932, "color":c1(7)}, {"starting_time": 1590348883932, "ending_time": 1590348889187, "color":c2(7), "label": "7.9s \/ 97.9 MB"}, {"starting_time": 1590348889187, "ending_time": 1590348891750, "color":c1(7)}]},
+{"label": "idfilter (2)", "times": [{"starting_time": 1590348883847, "ending_time": 1590348883933, "color":c1(7)}, {"starting_time": 1590348883933, "ending_time": 1590348889138, "color":c2(7), "label": "7.7s \/ 97.9 MB"}, {"starting_time": 1590348889138, "ending_time": 1590348891499, "color":c1(7)}]},
+{"label": "idfilter (3)", "times": [{"starting_time": 1590348883851, "ending_time": 1590348883934, "color":c1(7)}, {"starting_time": 1590348883934, "ending_time": 1590348889221, "color":c2(7), "label": "7.2s \/ 99 MB"}, {"starting_time": 1590348889221, "ending_time": 1590348891036, "color":c1(7)}]},
+{"label": "idfilter (4)", "times": [{"starting_time": 1590348883856, "ending_time": 1590348883936, "color":c1(7)}, {"starting_time": 1590348883936, "ending_time": 1590348889332, "color":c2(7), "label": "8.1s \/ 99.1 MB"}, {"starting_time": 1590348889332, "ending_time": 1590348891933, "color":c1(7)}]},
+{"label": "idfilter (5)", "times": [{"starting_time": 1590348883866, "ending_time": 1590348883937, "color":c1(7)}, {"starting_time": 1590348883937, "ending_time": 1590348889212, "color":c2(7), "label": "7.3s \/ 98.2 MB"}, {"starting_time": 1590348889212, "ending_time": 1590348891181, "color":c1(7)}]},
+{"label": "idfilter (6)", "times": [{"starting_time": 1590348883872, "ending_time": 1590348883939, "color":c1(7)}, {"starting_time": 1590348883939, "ending_time": 1590348889185, "color":c2(7), "label": "7.9s \/ 97.6 MB"}, {"starting_time": 1590348889185, "ending_time": 1590348891765, "color":c1(7)}]},
+{"label": "idfilter (7)", "times": [{"starting_time": 1590348883877, "ending_time": 1590348883940, "color":c1(7)}, {"starting_time": 1590348883940, "ending_time": 1590348889332, "color":c2(7), "label": "8.1s \/ 98.5 MB"}, {"starting_time": 1590348889332, "ending_time": 1590348891972, "color":c1(7)}]},
+{"label": "idfilter (8)", "times": [{"starting_time": 1590348890402, "ending_time": 1590348890497, "color":c1(7)}, {"starting_time": 1590348890497, "ending_time": 1590348895685, "color":c2(7), "label": "7.9s \/ 99.1 MB"}, {"starting_time": 1590348895685, "ending_time": 1590348898258, "color":c1(7)}]},
+{"label": "idfilter (9)", "times": [{"starting_time": 1590348891042, "ending_time": 1590348891136, "color":c1(7)}, {"starting_time": 1590348891136, "ending_time": 1590348896477, "color":c2(7), "label": "8.2s \/ 97.8 MB"}, {"starting_time": 1590348896477, "ending_time": 1590348899263, "color":c1(7)}]},
+{"label": "idfilter (10)", "times": [{"starting_time": 1590348891193, "ending_time": 1590348891281, "color":c1(7)}, {"starting_time": 1590348891281, "ending_time": 1590348896409, "color":c2(7), "label": "8.3s \/ 98.5 MB"}, {"starting_time": 1590348896409, "ending_time": 1590348899486, "color":c1(7)}]},
+{"label": "idfilter (11)", "times": [{"starting_time": 1590348891506, "ending_time": 1590348891599, "color":c1(7)}, {"starting_time": 1590348891599, "ending_time": 1590348896750, "color":c2(7), "label": "7.8s \/ 98.3 MB"}, {"starting_time": 1590348896750, "ending_time": 1590348899323, "color":c1(7)}]},
+{"label": "idfilter (12)", "times": [{"starting_time": 1590348891757, "ending_time": 1590348891769, "color":c1(7)}, {"starting_time": 1590348891769, "ending_time": 1590348897174, "color":c2(7), "label": "7.9s \/ 98.4 MB"}, {"starting_time": 1590348897174, "ending_time": 1590348899679, "color":c1(7)}]},
+{"label": "idfilter (13)", "times": [{"starting_time": 1590348891770, "ending_time": 1590348891865, "color":c1(7)}, {"starting_time": 1590348891865, "ending_time": 1590348897053, "color":c2(7), "label": "8.3s \/ 97.8 MB"}, {"starting_time": 1590348897053, "ending_time": 1590348900064, "color":c1(7)}]},
+{"label": "idfilter (14)", "times": [{"starting_time": 1590348891938, "ending_time": 1590348891978, "color":c1(7)}, {"starting_time": 1590348891978, "ending_time": 1590348897292, "color":c2(7), "label": "8.3s \/ 97.6 MB"}, {"starting_time": 1590348897292, "ending_time": 1590348900273, "color":c1(7)}]},
+{"label": "idfilter (15)", "times": [{"starting_time": 1590348891979, "ending_time": 1590348892072, "color":c1(7)}, {"starting_time": 1590348892072, "ending_time": 1590348897234, "color":c2(7), "label": "8.1s \/ 97.8 MB"}, {"starting_time": 1590348897234, "ending_time": 1590348900073, "color":c1(7)}]},
+{"label": "idfilter (16)", "times": [{"starting_time": 1590348898268, "ending_time": 1590348898358, "color":c1(7)}, {"starting_time": 1590348898358, "ending_time": 1590348903659, "color":c2(7), "label": "7.6s \/ 98.3 MB"}, {"starting_time": 1590348903659, "ending_time": 1590348905879, "color":c1(7)}]},
+{"label": "percolator (26)", "times": [{"starting_time": 1590348898699, "ending_time": 1590348898794, "color":c1(6)}, {"starting_time": 1590348898794, "ending_time": 1590348912737, "color":c2(6), "label": "16.6s \/ 194.7 MB"}, {"starting_time": 1590348912737, "ending_time": 1590348915336, "color":c1(6)}]},
+{"label": "idfilter (17)", "times": [{"starting_time": 1590348899268, "ending_time": 1590348899329, "color":c1(7)}, {"starting_time": 1590348899329, "ending_time": 1590348904746, "color":c2(7), "label": "7.9s \/ 98.3 MB"}, {"starting_time": 1590348904746, "ending_time": 1590348907132, "color":c1(7)}]},
+{"label": "idfilter (18)", "times": [{"starting_time": 1590348899329, "ending_time": 1590348899423, "color":c1(7)}, {"starting_time": 1590348899423, "ending_time": 1590348904616, "color":c2(7), "label": "8.7s \/ 98.3 MB"}, {"starting_time": 1590348904616, "ending_time": 1590348908011, "color":c1(7)}]},
+{"label": "idfilter (19)", "times": [{"starting_time": 1590348899492, "ending_time": 1590348899586, "color":c1(7)}, {"starting_time": 1590348899586, "ending_time": 1590348905207, "color":c2(7), "label": "8.9s \/ 98.2 MB"}, {"starting_time": 1590348905207, "ending_time": 1590348908375, "color":c1(7)}]},
+{"label": "idfilter (20)", "times": [{"starting_time": 1590348899683, "ending_time": 1590348899779, "color":c1(7)}, {"starting_time": 1590348899779, "ending_time": 1590348905141, "color":c2(7), "label": "8.8s \/ 98 MB"}, {"starting_time": 1590348905141, "ending_time": 1590348908445, "color":c1(7)}]},
+{"label": "idfilter (21)", "times": [{"starting_time": 1590348900069, "ending_time": 1590348900077, "color":c1(7)}, {"starting_time": 1590348900077, "ending_time": 1590348905700, "color":c2(7), "label": "8.8s \/ 99 MB"}, {"starting_time": 1590348905700, "ending_time": 1590348908897, "color":c1(7)}]},
+{"label": "idfilter (22)", "times": [{"starting_time": 1590348900077, "ending_time": 1590348900173, "color":c1(7)}, {"starting_time": 1590348900173, "ending_time": 1590348905400, "color":c2(7), "label": "8.6s \/ 98.6 MB"}, {"starting_time": 1590348905400, "ending_time": 1590348908665, "color":c1(7)}]},
+{"label": "idfilter (23)", "times": [{"starting_time": 1590348900280, "ending_time": 1590348900373, "color":c1(7)}, {"starting_time": 1590348900373, "ending_time": 1590348905694, "color":c2(7), "label": "8.3s \/ 98.3 MB"}, {"starting_time": 1590348905694, "ending_time": 1590348908599, "color":c1(7)}]},
+{"label": "idfilter (24)", "times": [{"starting_time": 1590348905885, "ending_time": 1590348905979, "color":c1(7)}, {"starting_time": 1590348905979, "ending_time": 1590348911499, "color":c2(7), "label": "7.5s \/ 98.2 MB"}, {"starting_time": 1590348911499, "ending_time": 1590348913361, "color":c1(7)}]},
+{"label": "idscoreswitcher (1)", "times": [{"starting_time": 1590348907138, "ending_time": 1590348907233, "color":c1(8)}, {"starting_time": 1590348907233, "ending_time": 1590348910669, "color":c2(8), "label": "6.3s \/ 81.1 MB"}, {"starting_time": 1590348910669, "ending_time": 1590348913424, "color":c1(8)}]},
+{"label": "idscoreswitcher (2)", "times": [{"starting_time": 1590348908017, "ending_time": 1590348908111, "color":c1(8)}, {"starting_time": 1590348908111, "ending_time": 1590348911480, "color":c2(8), "label": "6.5s \/ 81.3 MB"}, {"starting_time": 1590348911480, "ending_time": 1590348914471, "color":c1(8)}]},
+{"label": "idscoreswitcher (3)", "times": [{"starting_time": 1590348908378, "ending_time": 1590348908457, "color":c1(8)}, {"starting_time": 1590348908457, "ending_time": 1590348911544, "color":c2(8), "label": "5.6s \/ 79 MB"}, {"starting_time": 1590348911544, "ending_time": 1590348914016, "color":c1(8)}]},
+{"label": "idscoreswitcher (5)", "times": [{"starting_time": 1590348908457, "ending_time": 1590348908545, "color":c1(8)}, {"starting_time": 1590348908545, "ending_time": 1590348912012, "color":c2(8), "label": "6.2s \/ 80 MB"}, {"starting_time": 1590348912012, "ending_time": 1590348914660, "color":c1(8)}]},
+{"label": "idscoreswitcher (4)", "times": [{"starting_time": 1590348908604, "ending_time": 1590348908668, "color":c1(8)}, {"starting_time": 1590348908668, "ending_time": 1590348912074, "color":c2(8), "label": "6.6s \/ 81 MB"}, {"starting_time": 1590348912074, "ending_time": 1590348915156, "color":c1(8)}]},
+{"label": "idscoreswitcher (6)", "times": [{"starting_time": 1590348908671, "ending_time": 1590348908765, "color":c1(8)}, {"starting_time": 1590348908765, "ending_time": 1590348912323, "color":c2(8), "label": "6.9s \/ 81.4 MB"}, {"starting_time": 1590348912323, "ending_time": 1590348915531, "color":c1(8)}]},
+{"label": "idscoreswitcher (7)", "times": [{"starting_time": 1590348908901, "ending_time": 1590348908997, "color":c1(8)}, {"starting_time": 1590348908997, "ending_time": 1590348912551, "color":c2(8), "label": "6.3s \/ 81.1 MB"}, {"starting_time": 1590348912551, "ending_time": 1590348915238, "color":c1(8)}]},
+{"label": "idscoreswitcher (8)", "times": [{"starting_time": 1590348913368, "ending_time": 1590348913428, "color":c1(8)}, {"starting_time": 1590348913428, "ending_time": 1590348916819, "color":c2(8), "label": "5.6s \/ 83 MB"}, {"starting_time": 1590348916819, "ending_time": 1590348918921, "color":c1(8)}]},
+{"label": "idfilter (25)", "times": [{"starting_time": 1590348913428, "ending_time": 1590348913524, "color":c1(7)}, {"starting_time": 1590348913524, "ending_time": 1590348918420, "color":c2(7), "label": "7.4s \/ 97.2 MB"}, {"starting_time": 1590348918420, "ending_time": 1590348920868, "color":c1(7)}]},
+{"label": "idscoreswitcher (9)", "times": [{"starting_time": 1590348914023, "ending_time": 1590348914116, "color":c1(8)}, {"starting_time": 1590348914116, "ending_time": 1590348917225, "color":c2(8), "label": "6.7s \/ 79.1 MB"}, {"starting_time": 1590348917225, "ending_time": 1590348920695, "color":c1(8)}]},
+{"label": "idscoreswitcher (10)", "times": [{"starting_time": 1590348914479, "ending_time": 1590348914571, "color":c1(8)}, {"starting_time": 1590348914571, "ending_time": 1590348917777, "color":c2(8), "label": "6.4s \/ 80.1 MB"}, {"starting_time": 1590348917777, "ending_time": 1590348920860, "color":c1(8)}]},
+{"label": "idscoreswitcher (11)", "times": [{"starting_time": 1590348914665, "ending_time": 1590348914759, "color":c1(8)}, {"starting_time": 1590348914759, "ending_time": 1590348917865, "color":c2(8), "label": "5.9s \/ 77.8 MB"}, {"starting_time": 1590348917865, "ending_time": 1590348920539, "color":c1(8)}]},
+{"label": "idscoreswitcher (12)", "times": [{"starting_time": 1590348915161, "ending_time": 1590348915243, "color":c1(8)}, {"starting_time": 1590348915243, "ending_time": 1590348918823, "color":c2(8), "label": "6s \/ 83.1 MB"}, {"starting_time": 1590348918823, "ending_time": 1590348921145, "color":c1(8)}]},
+{"label": "idscoreswitcher (13)", "times": [{"starting_time": 1590348915248, "ending_time": 1590348915340, "color":c1(8)}, {"starting_time": 1590348915340, "ending_time": 1590348918686, "color":c2(8), "label": "6.1s \/ 79.4 MB"}, {"starting_time": 1590348918686, "ending_time": 1590348921319, "color":c1(8)}]},
+{"label": "percolator (27)", "times": [{"starting_time": 1590348915341, "ending_time": 1590348915436, "color":c1(6)}, {"starting_time": 1590348915436, "ending_time": 1590348928642, "color":c2(6), "label": "15.6s \/ 197.6 MB"}, {"starting_time": 1590348928642, "ending_time": 1590348930966, "color":c1(6)}]},
+{"label": "idscoreswitcher (14)", "times": [{"starting_time": 1590348915535, "ending_time": 1590348915631, "color":c1(8)}, {"starting_time": 1590348915631, "ending_time": 1590348918918, "color":c2(8), "label": "5.7s \/ 82.6 MB"}, {"starting_time": 1590348918918, "ending_time": 1590348921188, "color":c1(8)}]},
+{"label": "idscoreswitcher (15)", "times": [{"starting_time": 1590348918925, "ending_time": 1590348919022, "color":c1(8)}, {"starting_time": 1590348919022, "ending_time": 1590348922040, "color":c2(8), "label": "4.8s \/ 81.8 MB"}, {"starting_time": 1590348922040, "ending_time": 1590348923744, "color":c1(8)}]},
+{"label": "idscoreswitcher (16)", "times": [{"starting_time": 1590348920546, "ending_time": 1590348920640, "color":c1(8)}, {"starting_time": 1590348920640, "ending_time": 1590348923917, "color":c2(8), "label": "6.3s \/ 80.7 MB"}, {"starting_time": 1590348923917, "ending_time": 1590348926863, "color":c1(8)}]},
+{"label": "idscoreswitcher (17)", "times": [{"starting_time": 1590348920701, "ending_time": 1590348920795, "color":c1(8)}, {"starting_time": 1590348920795, "ending_time": 1590348924193, "color":c2(8), "label": "6.2s \/ 81.5 MB"}, {"starting_time": 1590348924193, "ending_time": 1590348926946, "color":c1(8)}]},
+{"label": "idscoreswitcher (18)", "times": [{"starting_time": 1590348920864, "ending_time": 1590348920871, "color":c1(8)}, {"starting_time": 1590348920871, "ending_time": 1590348924190, "color":c2(8), "label": "6.7s \/ 81.9 MB"}, {"starting_time": 1590348924190, "ending_time": 1590348927551, "color":c1(8)}]},
+{"label": "idscoreswitcher (19)", "times": [{"starting_time": 1590348920875, "ending_time": 1590348920968, "color":c1(8)}, {"starting_time": 1590348920968, "ending_time": 1590348924412, "color":c2(8), "label": "6.9s \/ 81.5 MB"}, {"starting_time": 1590348924412, "ending_time": 1590348927751, "color":c1(8)}]},
+{"label": "idscoreswitcher (20)", "times": [{"starting_time": 1590348921150, "ending_time": 1590348921190, "color":c1(8)}, {"starting_time": 1590348921190, "ending_time": 1590348924485, "color":c2(8), "label": "6.4s \/ 79.9 MB"}, {"starting_time": 1590348924485, "ending_time": 1590348927562, "color":c1(8)}]},
+{"label": "idscoreswitcher (21)", "times": [{"starting_time": 1590348921192, "ending_time": 1590348921288, "color":c1(8)}, {"starting_time": 1590348921288, "ending_time": 1590348924605, "color":c2(8), "label": "6.5s \/ 80.7 MB"}, {"starting_time": 1590348924605, "ending_time": 1590348927698, "color":c1(8)}]},
+{"label": "idscoreswitcher (22)", "times": [{"starting_time": 1590348921324, "ending_time": 1590348921420, "color":c1(8)}, {"starting_time": 1590348921420, "ending_time": 1590348924752, "color":c2(8), "label": "6.5s \/ 81.3 MB"}, {"starting_time": 1590348924752, "ending_time": 1590348927872, "color":c1(8)}]},
+{"label": "idscoreswitcher (23)", "times": [{"starting_time": 1590348923749, "ending_time": 1590348923845, "color":c1(8)}, {"starting_time": 1590348923845, "ending_time": 1590348927159, "color":c2(8), "label": "5.1s \/ 81.5 MB"}, {"starting_time": 1590348927159, "ending_time": 1590348928838, "color":c1(8)}]},
+{"label": "idscoreswitcher (24)", "times": [{"starting_time": 1590348926869, "ending_time": 1590348926953, "color":c1(8)}, {"starting_time": 1590348926953, "ending_time": 1590348930276, "color":c2(8), "label": "6.6s \/ 81 MB"}, {"starting_time": 1590348930276, "ending_time": 1590348933423, "color":c1(8)}]},
+{"label": "idfilter (26)", "times": [{"starting_time": 1590348926950, "ending_time": 1590348927046, "color":c1(7)}, {"starting_time": 1590348927046, "ending_time": 1590348931649, "color":c2(7), "label": "7.7s \/ 97.6 MB"}, {"starting_time": 1590348931649, "ending_time": 1590348934656, "color":c1(7)}]},
+{"label": "idscoreswitcher (25)", "times": [{"starting_time": 1590348927556, "ending_time": 1590348927567, "color":c1(8)}, {"starting_time": 1590348927567, "ending_time": 1590348930245, "color":c2(8), "label": "5.2s \/ 76.5 MB"}, {"starting_time": 1590348930245, "ending_time": 1590348932764, "color":c1(8)}]},
+{"label": "idfilter (27)", "times": [{"starting_time": 1590348930989, "ending_time": 1590348931080, "color":c1(7)}, {"starting_time": 1590348931080, "ending_time": 1590348935629, "color":c2(7), "label": "6.3s \/ 97.4 MB"}, {"starting_time": 1590348935629, "ending_time": 1590348937242, "color":c1(7)}]},
+{"label": "idscoreswitcher (26)", "times": [{"starting_time": 1590348934678, "ending_time": 1590348934757, "color":c1(8)}, {"starting_time": 1590348934757, "ending_time": 1590348937363, "color":c2(8), "label": "4.2s \/ 76.4 MB"}, {"starting_time": 1590348937363, "ending_time": 1590348938908, "color":c1(8)}]},
+{"label": "idscoreswitcher (27)", "times": [{"starting_time": 1590348937260, "ending_time": 1590348937343, "color":c1(8)}, {"starting_time": 1590348937343, "ending_time": 1590348939764, "color":c2(8), "label": "4.1s \/ 78.1 MB"}, {"starting_time": 1590348939764, "ending_time": 1590348941323, "color":c1(8)}]},
+{"label": "proteomicslfq (1)", "times": [{"starting_time": 1590348941764, "ending_time": 1590348941823, "color":c1(9)}, {"starting_time": 1590348941823, "ending_time": 1590352904254, "color":c2(9), "label": "1h 6m 4s \/ 5 GB"}, {"starting_time": 1590352904254, "ending_time": 1590352906163, "color":c1(9)}]},
+{"label": "msstats (1)", "times": [{"starting_time": 1590352906490, "ending_time": 1590352906509, "color":c1(10)}, {"starting_time": 1590352906509, "ending_time": 1590353778732, "color":c2(10), "label": "14m 34s \/ 1.1 GB"}, {"starting_time": 1590353778732, "ending_time": 1590353780415, "color":c1(10)}]}
+]
+
+
+function getTickFormat() {
+  var MIN = 1000 * 60
+  var HOUR = MIN * 60
+  var DAY = HOUR * 24
+  var delta = (endingMillis - beginningMillis)
+
+  if( delta < 2 * MIN ) {
+    return {
+      format: d3.time.format("%S"),
+      tickTime: d3.time.seconds,
+      tickInterval: 5,
+      tickSize: 6
+    }
+  }
+
+  if( delta < 2 * HOUR ) {
+    return {
+      format: d3.time.format("%M"),
+      tickTime: d3.time.minutes,
+      tickInterval: 5,
+      tickSize: 6
+    }
+  }
+
+  if( delta < 2 * DAY ) {
+    return {
+      format: d3.time.format("%H:%M"),
+      tickTime: d3.time.hours,
+      tickInterval: 1,
+      tickSize: 6
+    }
+  }
+
+  if( delta <= 7 * DAY ) {
+    return {
+      format: d3.time.format("%b %e %H:%M"),
+      tickTime: d3.time.hours,
+      tickInterval: 6,
+      tickSize: 6
+    }
+  }
+
+  return {
+    format: d3.time.format("%b %e"),
+    tickTime: d3.time.days,
+    tickInterval: 1,
+    tickSize: 6
+  }
+}
+
+function getLabelMargin(scale) {
+    $('<span class="labelSpan" style="display: none"></span>').appendTo('body');
+
+    var labelMargin = 0
+    $.each(data, function (key, value) {
+      labelMargin = Math.max(labelMargin, $('.labelSpan').html(value.label).width());
+    });
+
+    $('.labelSpan').remove();
+
+    return (labelMargin * scale);
+}
+
+function render() {
+  handler=null;
+  $("#timeline").empty()
+  $('#label_elapsed').text(elapsed)
+  $('#label_launch').text( d3.time.format('%d %b %Y %H:%M')(new Date(beginningMillis)) )
+
+  var width = $(window).width();
+  var chart = d3.timeline()
+    .stack() // toggles graph stacking
+    .margin({left:getLabelMargin(0.85), right:100, top:0, bottom:0})
+    .tickFormat( getTickFormat() )
+    .rowSeperators('#f5f5f5')
+    .showTimeAxisTick()
+    ;
+  var svg = d3.select("#timeline").append("svg").attr("width", width).datum(data).call(chart);
+}
+
+function hrz() {
+if( handler != null ) clearTimeout(handler)
+  handler = setTimeout(render, 150);
+}
+
+$(document).ready(render)
+$(window).resize(hrz); // resize the applet on window resize
+</script>
+</head>
+
+<body>
+<div>
+  <h3>Processes execution timeline</h3>
+  <p>
+    Launch time: <span id='label_launch'> </span><br>
+    Elapsed time: <span id='label_elapsed'> </span><br>
+    Legend: job wall time / memory usage (RAM) <span id='label_legend'> </span>
+  </p>
+  <div id="timeline"></div>
+</div>
+
+<div id='footer'>
+  Created with Nextflow -- <a href='http://www.nextflow.io' target='_blank'>http://nextflow.io</a>
+</div>
+
+<script type="text/javascript">
+var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Clink href='" + prot + "fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css' %3E%3C/link%3E"));
+</script>
+</body>
+</html>
