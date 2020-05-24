@@ -1,0 +1,1 @@
+~/nextflow run nf-core/proteomicslfq -r dev -profile docker --sdrf https://raw.githubusercontent.com/bigbio/proteomics-metadata-standard/master/annotated-projects/PXD001819/sdrf.tsv --database https://raw.githubusercontent.com/nf-core/test-datasets/proteomicslfq/testdata-aws/uniprot_yeast_reviewed_isoforms_ups1_crap.fasta_td.fasta
