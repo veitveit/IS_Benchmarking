@@ -1,0 +1,50 @@
+ nf-core/proteomicslfq v1.0dev
+========================================
+=======
+----------------------------------------------------
+                                        ,--./,-.
+        ___     __   __   __   ___     /,-._.--~\
+  |\ | |__  __ /  ` /  \ |__) |__         }  {
+  | \| |       \__, \__/ |  \ |___     \`-._,-`-,
+                                        `._,._,'
+  nf-core/proteomicslfq v1.0dev
+----------------------------------------------------
+
+Run Name: pensive_joliot
+
+## nf-core/proteomicslfq execution completed successfully! ##
+
+
+The workflow was completed at 2020-05-24T21:56:20.429+01:00 (duration: 1h 47m)
+
+The command used to launch the workflow was as follows:
+
+  nextflow run nf-core/proteomicslfq -r dev -profile docker --sdrf 'https://raw.githubusercontent.com/bigbio/proteomics-metadata-standard/master/annotated-projects/PXD001819/sdrf.tsv' --root_folder /local/scratch/nextflow-test-data-openms/MZML --local_input_type mzML --database 'https://raw.githubusercontent.com/nf-core/test-datasets/proteomicslfq/testdata-aws/uniprot_yeast_reviewed_isoforms_ups1_crap.fasta_td.fasta'
+
+
+
+Pipeline Configuration:
+-----------------------
+ - Run Name: pensive_joliot
+ - Max Resources: 128 GB memory, 16 cpus, 10d time per job
+ - Container: docker - nfcore/proteomicslfq:dev
+ - Output dir: ./results
+ - Launch dir: /local/scratch/nextflow-test-data-openms
+ - Working dir: /local/scratch/nextflow-test-data-openms/work
+ - Script dir: /local/scratch/NXF_HOME/assets/nf-core/proteomicslfq
+ - User: pfeuffer
+ - Config Profile: docker
+ - Date Started: 2020-05-24T20:09:20.831+01:00
+ - Date Completed: 2020-05-24T21:56:20.429+01:00
+ - Pipeline script file path: /local/scratch/NXF_HOME/assets/nf-core/proteomicslfq/main.nf
+ - Pipeline script hash ID: 6846430b052533157f66a178429bbbbd
+ - Pipeline repository Git URL: https://github.com/nf-core/proteomicslfq.git
+ - Pipeline repository Git Commit: 0d2e36bffa6c908dba31a400d8b0b5e5b6b5f492
+ - Pipeline Git branch/tag: dev
+ - Nextflow Version: 20.01.0
+ - Nextflow Build: 5264
+ - Nextflow Compile Timestamp: 12-02-2020 10:14 UTC
+
+--
+nf-core/proteomicslfq
+https://github.com/nf-core/proteomicslfq
