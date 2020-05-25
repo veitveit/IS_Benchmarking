@@ -1,0 +1,19 @@
+nf-core/proteomicslfq	v1.0dev
+Nextflow	v20.01.0
+ThermorawfileParser	v1.2.0
+FileConverter	v2.5.0
+DecoyDatabase	v2.5.0
+MSGFPlusAdapter	v2.5.0
+MSGFPlus	v21 July 2017
+CometAdapter	v2.5.0
+Comet	v2016.01 rev. 3
+PeptideIndexer	v2.5.0
+PSMFeatureExtractor	v2.5.0
+PercolatorAdapter	v2.5.0
+Percolator	v3.04.0
+IDFilter	v2.5.0
+IDScoreSwitcher	v2.5.0
+FalseDiscoveryRate	v2.5.0
+IDPosteriorErrorProbability	v2.5.0
+ProteomicsLFQ	v2.5.0
+MSstats	v1.0dev
