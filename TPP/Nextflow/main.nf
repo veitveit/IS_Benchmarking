@@ -350,6 +350,7 @@ process run_stpeter {
     script:
     """
     StPeter -f ${params.quantification_fdr}  "${protxml}"
+    StPeter -i -f ${params.quantification_fdr}  "${protxml}"
     """
     
 }
