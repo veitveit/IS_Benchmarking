@@ -1,9 +1,9 @@
 .*
 .nextflow*
 .nextflow/
-absence_peak_data/
 conf/
 dag.dot*
+data/
 report.html*
 results/
 timeline.html*

@@ -22,12 +22,10 @@ def helpMessage() {
  */
 
 // Validate inputs
+params.txts = params.txts ?: { log.error "No read data provided. Make sure you have used the '--txts' option."; exit 1 }()
 params.raws = params.raws ?: { log.error "No read data provided. Make sure you have used the '--raws' option."; exit 1 }()
-// params.absence = params.absence ?: { log.error "No absence peak data provided. Make sure you have used the '--absence' option."; exit 1 }()
-params.inifile = params.inifile ?: { log.error "No absence peak data provided. Make sure you have used the '--absence' option."; exit 1 }()
+params.inifile = params.inifile ?: { log.error "No ini configuration file provided. Make sure you have used the '--inifile' option."; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
-//params.loc_in = params.loc_in ?: { log.error "No output directory provided. Will put the results into './results'"; return "./results" }()
-params.raw_repo = params.raw_repo ?: { log.error "21"; exit 1 }()
 
 
 /*
@@ -52,16 +50,13 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
  * Create channels for input files
  */
 Channel.fromPath( params.raws ).set { input_raw }
-
-// Channel.fromPath( params.absence ).set { input_absence; }
-
+Channel.fromPath( params.txts ).set { input_txt }
 Channel.fromPath( params.inifile ).set { input_ini; }
 
 
-Channel.fromPath( params.raw_repo ).into { raw_repo; loc_in; }
-
-
-
+/*
+ * STEP 0 - 100% dysfunctional for now
+ */
 // process get_peptideshaker_tsv {
 //     publishDir "${params.outdir}"
 //     input:
@@ -79,7 +74,7 @@ Channel.fromPath( params.raw_repo ).into { raw_repo; loc_in; }
 
 
 /*
- * STEP 1 - convert raw files to mgf
+ * STEP 1 - Run moFF
  */
 process moff_all {
     echo true
@@ -87,19 +82,13 @@ process moff_all {
 
     container "veitveit/moffworkflow:dev"
 
-
     input:
-        //file rawfile from input_raw
+        file txt_filepath from input_txt
+        file raw_filepath from input_raw
         file inifile from input_ini
-        file rawrepodir from raw_repo
-        //file loc_in from loc_in
-        //file absencefile from input_absence
-
 
     output:
         stdout stdout_channel
-        path "absence_peak_data/raw_repo/apex_output" into apex_output
-        path "absence_peak_data/mbr_output/" into mbr_output
 
     script:
         """
@@ -107,11 +96,7 @@ process moff_all {
 
         moff_filepath=\$(which moff_all.py;);
 
-        #python3 "\${moff_filepath}" --loc_out "${params.outdir}" --config_file "${inifile}" --loc_in "${rawrepodir}" --ext "txt"; # --raw_repo "${rawrepodir}"
-        #python3 "\${moff_filepath}" --loc_out "${params.outdir}" --loc_in "${rawrepodir}" --mbr only;
-        #python3.6 "\${moff_filepath}" --loc_out "${params.outdir}"  --config_file "${inifile}";
-        #python3.6 "\${moff_filepath}" --config_file "${inifile}" --peptide_summary 2>&1;
-	python3.6 $(which moff_all.py) --config_file "${inifile}" --loc_in ./ --peptide_symmary 2>&1
+        python3.6 \${moff_filepath} --config_file "${inifile}" --loc_in "${txt_filepath}" --raw_repo "${raw_filepath}" --peptide_summary 2>&1
         """
 }
 
