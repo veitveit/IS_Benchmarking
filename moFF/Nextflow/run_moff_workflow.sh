@@ -1,5 +1,7 @@
 #!/bin/bash
 
-time docker build . -t "veitveit/moffworkflow:dev";
+#time docker build . -t "veitveit/moffworkflow:dev";
 
-nextflow  run main.nf --raws 'data/*.raw' --txts 'data/*.txt' --inifile "data/configuration_iRT.ini" -profile docker 
+time nextflow run ./main.nf -with-report -with-trace -with-timeline -with-dag -profile test,docker
+
+#nextflow run main.nf -profile docker
