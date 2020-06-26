@@ -4,7 +4,7 @@
                          nf-core/proline
 ========================================================================================
  nf-core/proline_workflow Analysis Pipeline.
- #### Homepage / Documentation
+#### Homepage / Documentation
 TODO https://github.com/nf-core/proline
 ----------------------------------------------------------------------------------------
 */
@@ -65,6 +65,9 @@ def helpMessage() {
       
     Options for Proline:
       --experiment_design                text-file containing 2 columns: first with mzDB file names and second with names for experimental conditions
+
+    Run statistics
+      --run_statistics			Either true or false
 
     Other options:
       --outdir                          The output directory where the results will be saved
@@ -139,15 +142,14 @@ log.warn "Decoys have to be named with DECOY_ as prefix in your fasta database"
 
 params.experiment_design = "none"
 
-
-
-
 params.quantification_fdr = false
 params.quantification_min_prob = 0
 if (params.quantification_fdr) {
    log.warn "Quantification FDR enabled"
 }
 
+
+params.run_statistics = true
 
 /*
  * SET UP CONFIGURATION VARIABLES
@@ -430,7 +432,7 @@ process set_proline_exp_design {
       
        
     output:
-      file "quant_exp_design.txt" into (exp_design_file)
+      file "quant_exp_design.txt" into (exp_design_file, exp_design_file2)
     script: 
        // no file provided
       if (expdesign.getName() == "none") {
@@ -505,7 +507,32 @@ process run_proline {
     """
 }
 
+/*
+ * STEP 11 - run PolySTest for stats
+*/
+process run_polystest {
+    publishDir "${params.outdir}"
 
+    when:
+      params.run_statistics
+
+    input:
+      file exp_design from exp_design_file2
+      file proline_res from proline_out
+       
+    output:
+      file "polystest_prot_res.csv"  into polystest_prot_out
+      file "polystest_pep_res.csv" into polystest_pep_out
+
+    script:
+    """
+    convertFromProline.R ${exp_design} ${proline_res}
+    sed -i "s/threads: 2/threads: ${task.cpus}/g" pep_param.yml
+    sed -i "s/threads: 2/threads: ${task.cpus}/g" prot_param.yml
+    runPolySTestCLI.R pep_param.yml
+    runPolySTestCLI.R prot_param.yml    
+    """
+}
 
 workflow.onComplete {
     log.info ( workflow.success ? "\nDone! Open the files in the following folder --> $params.outdir\n" : "Oops .. something went wrong" )
