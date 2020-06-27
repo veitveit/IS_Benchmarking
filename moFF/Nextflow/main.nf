@@ -79,9 +79,7 @@ def helpMessage() {
 
 
 // Validate inputs
-params.txts = params.txts ?: { log.error "No read data provided. Make sure you have used the '--txts' option."; exit 1 }()
 params.raws = params.raws ?: { log.error "No read data provided. Make sure you have used the '--raws' option."; exit 1 }()
-<<<<<<< HEAD
 params.fasta = params.fasta ?: { log.error "No fasta file provided. Make sure you have used the '--fasta' option."; exit 1 }()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
 
@@ -141,10 +139,6 @@ params.quantification_min_prob = 0
 if (params.quantification_fdr) {
    log.warn "Quantification FDR enabled"
 }
-=======
-params.inifile = params.inifile ?: { log.error "No ini configuration file provided. Make sure you have used the '--inifile' option."; exit 1 }()
-params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
->>>>>>> e3c08f26cf11e7e232ee23aa895d0b6e684b7024
 
 
 /*
@@ -175,7 +169,6 @@ Channel
 /*
  * Create a channel for fasta file
  */
-<<<<<<< HEAD
   Channel
         .fromPath( params.fasta ).into {input_fasta; input_fasta2}
   
@@ -202,18 +195,12 @@ process convert_raw_mgf {
     
     output:
      file "${rawfile.baseName}.mgf" into (mgfs, mgfs2, mgfs3, mgfs4)
-=======
-Channel.fromPath( params.raws ).set { input_raw }
-Channel.fromPath( params.txts ).set { input_txt }
-Channel.fromPath( params.inifile ).set { input_ini; }
->>>>>>> e3c08f26cf11e7e232ee23aa895d0b6e684b7024
 
     script:
      """
      ThermoRawFileParser.sh -i ${rawfile} -o ./  -f 0 -m 0
      """
 
-<<<<<<< HEAD
 }
 
 /*
@@ -229,15 +216,6 @@ process create_decoy_database {
 
     when:
       !params.skip_decoy_generation
-=======
-/*
- * STEP 0 - 100% dysfunctional for now
- */
-// process get_peptideshaker_tsv {
-//     publishDir "${params.outdir}"
-//     input:
-//         tuple file(pepshaker), file(mgffile) from peptideshaker_file
->>>>>>> e3c08f26cf11e7e232ee23aa895d0b6e684b7024
 
     script:
      """
@@ -248,11 +226,7 @@ process create_decoy_database {
 
 
 /*
-<<<<<<< HEAD
  * STEP 3 - create  searchgui parameter file
-=======
- * STEP 1 - Run moFF
->>>>>>> e3c08f26cf11e7e232ee23aa895d0b6e684b7024
  */
 process create_searchgui_paramfile {
     publishDir "${params.outdir}"
@@ -274,7 +248,6 @@ process create_searchgui_paramfile {
          """    
 } 
 
-<<<<<<< HEAD
 
 
 /*
@@ -313,15 +286,6 @@ process run_peptideshaker {
 
     output:
       tuple file("${mgffile.baseName}.cpsx"), file(mgffile) into (peptideshaker_file, peptideshaker_file2)
-=======
-    input:
-        file txt_filepath from input_txt
-        file raw_filepath from input_raw
-        file inifile from input_ini
-
-    output:
-        stdout stdout_channel
->>>>>>> e3c08f26cf11e7e232ee23aa895d0b6e684b7024
 
     script:
     mem = " ${task.memory}"
@@ -394,13 +358,9 @@ process moff_all {
         stdout stdout_channel
         file "out/peptide_summary_intensity_moFF_run.tab" into moff_tab_output
 
-<<<<<<< HEAD
     script:
         """
         python3.6 \$(which moff_all.py) --mbr on  --raw_list ${rawfiles} --tsv_list ${peptideshaker_out} --tol "${params.precursor_mass_tolerance}" --cpu "${task.cpus}" --loc_out out  --peptide_summary 2>&1
-=======
-        python3.6 \${moff_filepath} --config_file "${inifile}" --loc_in "${txt_filepath}" --raw_repo "${raw_filepath}" --peptide_summary 2>&1
->>>>>>> e3c08f26cf11e7e232ee23aa895d0b6e684b7024
         """
 }
 
