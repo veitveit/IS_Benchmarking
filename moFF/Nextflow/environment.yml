@@ -17,5 +17,4 @@ dependencies:
   - mono=5.14.0.177
   - libopenblas=0.3.3
   - bioconductor-msnbase=2.14.1
-#  - r=3.6.0
   - r-msqrob=0.7.6

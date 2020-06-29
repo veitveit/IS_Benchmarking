@@ -526,7 +526,11 @@ process run_polystest {
 
     script:
     """
-    convertFromProline.R ${exp_design} ${proline_res}
+ convertProline=\$(which runPolySTestCLI.R)
+    echo \$convertProline
+    convertProline=\$(dirname \$convertProline)
+    echo \$convertProline
+    Rscript \${convertProline}/convertFromProline.R ${exp_design} ${proline_res}
     sed -i "s/threads: 2/threads: ${task.cpus}/g" pep_param.yml
     sed -i "s/threads: 2/threads: ${task.cpus}/g" prot_param.yml
     runPolySTestCLI.R pep_param.yml
