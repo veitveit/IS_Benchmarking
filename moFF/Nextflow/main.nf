@@ -380,8 +380,8 @@ process run_msqrob {
 
     script:
      // no file provided
-    if (exp_design.getName() == "none") {
       expdesign_text = "run\tgenotype\tbiorep"
+    if (exp_design.getName() == "none") {
       for( int i=0; i<rawfiles.size(); i++ ) {
          biorep = i+1
          expdesign_text += "\n${rawfiles[i].baseName}\tMain\tA${biorep}"
