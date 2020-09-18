@@ -1,6 +1,19 @@
-# Workflow to analyze label-free data with the searchgui and proline
-This workflow is based on a docker image which has to be created beforehand. A Dockerfile is available. 
-The image needs to be named veitveit/prolineworkflow:dev
+# Workflows to analyze label-free data with SearchGUI and Proline
+
+The provided workflows are based on a docker images which have to be created beforehand.
+
+Two Dockerfiles are available:
+* the default Dockerfile to be used with the default workflow (main.nf)
+* Dockerfile4FastWF to be used with the expeimental but faster workflow (main_fast.nf)
+
+Here are the commands to be used for docker images creation:
+```
+# main.nf workflow image creation
+docker build -t "veitveit/veitveit/prolineworkflow:dev" .
+
+# main_fast.nf workflow image creation
+docker build -t "veitveit/prolinefastworkflow:dev" -f Dockerfile4FastWF .
+```
 
 ## Getting started
 
@@ -47,4 +60,11 @@ nextflow run main.nf --raws 'RAWFOLDER/*.raw' --fasta yeast_UPS.fasta --precurso
 
 ```
 
+Alternative command for the experimental fast workflow (based on X!Tandem):
+
+```
+./nextflow run main_fast.nf --raws '../data/*.raw' --fasta ./data/yeast_UPS.fasta --precursor_mass_tolerance 5 --fragment_mass_tolerance 0.6 --miscleavages 2 \
+  --variable_mods 'Oxidation of M, Acetylation of protein N-term' --experiment_design './data/pxd001819.txt' --lfq_param './data/lfq_param_file.txt' \
+  --max_cpus 8 --max_memory 16GB -profile docker4fastwf -with-report -with-trace -with-timeline
+```
 
