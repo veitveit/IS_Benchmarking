@@ -1,5 +1,5 @@
 import-result-files-config {
-  decoy_regex = ".+REVERSED.+"
+  decoyRegex = "REVERSED"
   peaklist_software_id = 10
 }
 
@@ -16,7 +16,7 @@ validate-dataset-config {
     
     pep_match_validator_config = {
       parameter = "SCORE"
-      expected_fdr = 1.0
+      expected_fdr = 5.0
     }
     
     pep_set_score_type = "mascot:standard score"
