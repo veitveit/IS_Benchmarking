@@ -192,5 +192,4 @@ task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	p
 192	03/0536f2	16184	get_peptideshaker_tsv (27)	COMPLETED	0	2020-05-03 17:52:34.061	2m 22s	2m 20s	224.4%	1.2 GB	4.6 GB	7.1 GB	193.1 MB
 191	fd/4366e8	16605	get_peptideshaker_mzid (27)	COMPLETED	0	2020-05-03 17:52:36.677	2m 20s	2m 18s	164.2%	745.2 MB	4.6 GB	3.5 GB	245.9 MB
 193	a8/138a62	26609	set_proline_inputfiles	COMPLETED	0	2020-05-03 17:54:56.395	944ms	6ms	66.7%	0	0	49 KB	856 B
-194	7b/23555b	26816	run_proline (1)	FAILED	137	2020-05-03 17:54:57.359	16m 39s	16m 39s	-	-	-	-	-
 195	bc/58f018	3462	run_proline (1)	COMPLETED	0	2020-05-03 18:11:36.564	25m 58s	25m 57s	622.5%	12.1 GB	46.4 GB	824.6 GB	21.5 GB
