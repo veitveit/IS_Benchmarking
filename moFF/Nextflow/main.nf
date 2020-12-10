@@ -243,7 +243,7 @@ process create_searchgui_paramfile {
          -frag_tol ${params.fragment_mass_tolerance} -enzyme ${params.enzyme} -mc ${params.miscleavages}  \\
              -fixed_mods "${params.fixed_mods}" -variable_mods "${params.variable_mods}" -min_charge ${params.min_charge} -max_charge ${params.max_charge} \\
          -fi ${params.fions} -ri ${params.rions} -import_peptide_length_min ${params.peptide_min_length} \\
-         -import_peptide_length_max ${params.peptide_max_length} -xtandem_quick_acety 0 -xtandem_quick_pyro 0 \\
+         -import_peptide_length_max ${params.peptide_max_length} -xtandem_quick_acetyl 0 -xtandem_quick_pyro 0 \\
           -db ${fasta_decoy}  -out searchgui.par 
          """    
 } 
