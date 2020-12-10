@@ -16,10 +16,10 @@ def helpMessage() {
     Usage:
 
     The typical command for running the pipeline is as follows:
-    nextflow run main_fast.nf --raws '*.raw' --fasta '*.fasta' --experiment_design 'test.txt' --lfq_param 'lfq_param_file.txt' -profile docker4fastwf
+    nextflow run main.nf --raws '*.raw' --fasta '*.fasta' --experiment_design 'test.txt' --lfq_param 'lfq_param_file.txt' -profile docker
 
     For testing purposes:
-    nextflow run main_fast.nf  -profile docker4fastwf,test 
+    nextflow run main.nf  -profile docker,test 
     (you need to put the file "UPS1_500amol_R1.raw" into the data folder before)
     Link: ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2015/12/PXD001819/UPS1_500amol_R1.raw
     
