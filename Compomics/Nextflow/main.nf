@@ -32,27 +32,19 @@ def helpMessage() {
       --peptide_max_length              Maximum peptide length for filtering
       --precursor_mass_tolerance        Mass tolerance of precursor mass (ppm)
       --fragment_mass_tolerance         Mass tolerance of fragment mass bin (Da)
-      --fragment_bin_offset             Offset of fragment mass bin (Comet specific parameter)
       --fions                          Forward ions for spectral matching
       --rions                          Reverse ions for spectral matching
-      --fdr_threshold                   Threshold for FDR filtering
-      --fdr_level                       Level of FDR calculation ('peptide-level-fdrs', 'psm-level-fdrs', 'protein-level-fdrs')
-      --digest_mass_range               Mass range of peptides considered for matching
-      --activation_method               Fragmentation method ('ALL', 'CID', 'ECD', 'ETD', 'PQD', 'HCD', 'IRMPD')
-      --enzyme                          Enzymatic cleavage ('unspecific cleavage', 'Trypsin', see OpenMS enzymes)
+//      --fdr_threshold                   Threshold for FDR filtering
+//      --fdr_level                       Level of FDR calculation ('peptide-level-fdrs', 'psm-level-fdrs', 'protein-level-fdrs')
+      --enzyme                          Enzymatic cleavage (e.g. 'Trypsin', see SearchGUI documentation)
       --miscleavages            Number of allowed miscleavages
-      --number_mods                     Maximum number of modifications of PSMs
-      --fixed_mods                      Fixed modifications ('Carbamidomethyl (C)', see OpenMS modifications)
-      --variable_mods                   Variable modifications ('Oxidation (M)', see OpenMS modifications)
-      --num_hits                        Number of reported hits
-      --run_centroidisation             Specify whether mzml data is peak picked or not (true, false)
-      --pick_ms_levels                  The ms level used for peak picking (eg. 1, 2)
+//      --number_mods                     Maximum number of modifications of PSMs
+      --fixed_mods                      Fixed modifications ('Carbamidomethyl of C', see SearchGUI modifications)
+      --variable_mods                   Variable modifications ('Oxidation of M', see SearchGUI modifications)
      --min_charge                       Minimal precursor charge 
      --max_charge                       Maximal precursor charge 
-      --max_rt_alignment_shift          Maximal retention time shift (sec) resulting from linear alignment      
       --skip_decoy_generation           Use a fasta databse that already includes decoy sequences
-      --quantification_fdr              Assess and assign ids matched between runs with an additional quantification FDR
-      --quantification_min_prob         Specify a minimum probability cut off for quantification
+//      --quantification_fdr              Assess and assign ids matched between runs with an additional quantification FDR
       --run_xtandem                     SearchGui runs xtandem database search
       --run_msgf                        SearchGui runs msgf+ database search
       --run_comet                       SearchGui runs comet database search
@@ -61,6 +53,7 @@ def helpMessage() {
       
     Options for flashLFQ:
       --mbr				true/false, apply match between runs
+      --max_rt_alignment_shift          FlashLFQ parameter: Maximum MBR window (minutes) - The retention-time error allowed in match-between runs. 
       --experiment_design                text-file containing 2 columns: first with mzDB file names and second with names for experimental conditions
 
     Other options:
@@ -96,28 +89,18 @@ params.fragment_mass_tolerance = 0.5
 params.precursor_mass_tolerance = 30
 params.fions = "b"
 params.rions = "y"
-params.fragment_bin_offset = 0
-params.fdr_threshold = 0.01
-params.fdr_level = 'peptide-level-fdrs'
-fdr_level = (params.fdr_level == 'psm-level-fdrs') ? '' : '-'+params.fdr_level
-params.description_correct_features = 0
-params.klammer = false
-params.number_mods = 3
-
-params.num_hits = 1
-params.digest_mass_range = "800:2500"
-params.pick_ms_levels = 2
-params.run_centroidisation = false
+//params.fdr_threshold = 0.01
+//params.fdr_level = 'peptide-level-fdrs'
+//fdr_level = (params.fdr_level == 'psm-level-fdrs') ? '' : '-'+params.fdr_level
+//params.number_mods = 3
 
 params.min_charge = 2
 params.max_charge = 3
-params.activation_method = 'ALL'
 
 params.enzyme = 'Trypsin'
 params.miscleavages = 1
 params.fixed_mods = 'Carbamidomethylation of C'
 params.variable_mods = 'Oxidation of M'
-params.spectrum_batch_size = 500
 params.run_xtandem = 1
 params.run_msgf = 0
 params.run_comet = 0
@@ -134,14 +117,15 @@ log.warn "Decoys have to be named with DECOY_ as prefix in your fasta database"
 }
 
 params.experiment_design = "none"
-params.mbr = "false"
+// FlashLFQ parameters
+params.mbr = "true"
+params.max_rt_alignment_shift = 2.5
 
-params.quantification_fdr = false
-params.quantification_min_prob = 0
+/*params.quantification_fdr = false
 if (params.quantification_fdr) {
    log.warn "Quantification FDR enabled"
 }
-
+*/
 
 /*
  * SET UP CONFIGURATION VARIABLES
@@ -354,7 +338,7 @@ process flashLFQ_all {
 	   first_line=\$(head -n1 "\$file")
         done
         echo "\$first_line" | cat - tlfq_ident.tabular > lfq_ident.tabular
-        FlashLFQ --idt "lfq_ident.tabular" --rep "./" --out ./ --mbr ${params.mbr} --ppm ${params.precursor_mass_tolerance}
+        FlashLFQ --idt "lfq_ident.tabular" --rep "./" --out ./ --mbr ${params.mbr} --mrt ${params.max_rt_alignment_shift} --ppm ${params.precursor_mass_tolerance} --thr ${task.cpus}
         """
 }
 
