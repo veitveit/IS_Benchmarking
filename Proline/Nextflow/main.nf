@@ -36,27 +36,15 @@ def helpMessage() {
       --peptide_max_length              Maximum peptide length for filtering
       --precursor_mass_tolerance        Mass tolerance of precursor mass (ppm)
       --fragment_mass_tolerance         Mass tolerance of fragment mass bin (Da)
-      --fragment_bin_offset             Offset of fragment mass bin (Comet specific parameter)
       --fions                          Forward ions for spectral matching
       --rions                          Reverse ions for spectral matching
-      --fdr_threshold                   Threshold for FDR filtering
-      --fdr_level                       Level of FDR calculation ('peptide-level-fdrs', 'psm-level-fdrs', 'protein-level-fdrs')
-      --digest_mass_range               Mass range of peptides considered for matching
-      --activation_method               Fragmentation method ('ALL', 'CID', 'ECD', 'ETD', 'PQD', 'HCD', 'IRMPD')
-      --enzyme                          Enzymatic cleavage ('unspecific cleavage', 'Trypsin', see OpenMS enzymes)
+      --enzyme                          Enzymatic cleavage (e.g. 'Trypsin', see SearchGUI enzymes)
       --miscleavages            Number of allowed miscleavages
-      --number_mods                     Maximum number of modifications of PSMs
-      --fixed_mods                      Fixed modifications ('Carbamidomethyl (C)', see OpenMS modifications)
-      --variable_mods                   Variable modifications ('Oxidation (M)', see OpenMS modifications)
-      --num_hits                        Number of reported hits
-      --run_centroidisation             Specify whether mzml data is peak picked or not (true, false)
-      --pick_ms_levels                  The ms level used for peak picking (eg. 1, 2)
+      --fixed_mods                      Fixed modifications ('Carbamidomethyl of C', see SearchGUI modifications)
+      --variable_mods                   Variable modifications ('Oxidation of M', see Search modifications)
      --min_charge                       Minimal precursor charge 
      --max_charge                       Maximal precursor charge 
-      --max_rt_alignment_shift          Maximal retention time shift (sec) resulting from linear alignment      
       --skip_decoy_generation           Use a fasta databse that already includes decoy sequences
-      --quantification_fdr              Assess and assign ids matched between runs with an additional quantification FDR
-      --quantification_min_prob         Specify a minimum probability cut off for quantification
       --run_xtandem                     SearchGui runs xtandem database search
       
     Options for Proline:
@@ -99,28 +87,15 @@ params.fragment_mass_tolerance = 0.5
 params.precursor_mass_tolerance = 30
 params.fions = "b"
 params.rions = "y"
-params.fragment_bin_offset = 0
-params.fdr_threshold = 0.01
-params.fdr_level = 'peptide-level-fdrs'
-fdr_level = (params.fdr_level == 'psm-level-fdrs') ? '' : '-'+params.fdr_level
-params.description_correct_features = 0
-params.klammer = false
-params.number_mods = 3
 
-params.num_hits = 1
-params.digest_mass_range = "800:2500"
-params.pick_ms_levels = 2
-params.run_centroidisation = false
 
 params.min_charge = 2
 params.max_charge = 3
-params.activation_method = 'ALL'
 
 params.enzyme = 'Trypsin'
 params.miscleavages = 1
 params.fixed_mods = 'Carbamidomethylation of C'
 params.variable_mods = 'Oxidation of M'
-params.spectrum_batch_size = 500
 params.run_xtandem = 1
 params.run_msgf = 0
 params.run_comet = 0
@@ -138,11 +113,6 @@ log.warn "Decoys have to be named with DECOY_ as prefix in your fasta database"
 
 params.experiment_design = "none"
 
-params.quantification_fdr = false
-params.quantification_min_prob = 0
-if (params.quantification_fdr) {
-   log.warn "Quantification FDR enabled"
-}
 
 
 params.run_statistics = true
