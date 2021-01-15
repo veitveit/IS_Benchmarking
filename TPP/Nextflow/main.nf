@@ -409,7 +409,7 @@ if (exp_design_file.getName() == "none") {
      } else {
     """
     cp "${exp_design_file}" exp_design.txt
-     R CMD BATCH $baseDir/MergeOutput.R
+     R CMD BATCH $baseDir/scripts/MergeOutput.R
 
     """
      }
