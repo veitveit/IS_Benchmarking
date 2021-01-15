@@ -305,7 +305,7 @@ process run_peptideprophet {
      file fasta from input_fasta2
 
     output:
-     file "${pepxml_file.baseName}.interact.pep.xml" into interact_pepxml
+     file "${pepxml_file.baseName}.interact.pep.xml" into (interact_pepxml, interact_pepxml2)
      
     script:
      enzymemap = ["Trypsin": "", "Trypsin/P": "", "Lys_C": "-eN", "Lys_N": "-eL", "Arg_C": "-eN", "Asp_N": "-eA", "CNBr": "-eM", "Glu_C": "-eG", "PepsinA": "-eN", "Chymotrypsin": "-eC", "Unspecified": "-eN"]
@@ -326,7 +326,7 @@ process run_proteinprophet {
      file pepxml_file from interact_pepxml
 
     output:
-     file "${pepxml_file.baseName}.prot.xml" into (protxml, protxml2)
+     tuple file("${pepxml_file.baseName}.prot.xml"), file(pepxml_file) into (protxml, protxml2)
      
     script:
     """
@@ -335,28 +335,53 @@ process run_proteinprophet {
 }
 
 /*
- * STEP 4 - run StPepter for protein quantification (label-free)
+ * STEP 5 - run StPeter for protein quantification (label-free)
 */ 
 
 process run_stpeter {
     publishDir "${params.outdir}"
     input:
-     each file(protxml) from protxml 
-     file fasta from input_fasta3
+     tuple file(protxml), file(pepxml) from protxml 
+     each file(fasta) from input_fasta3
 
     output:
-     file "*csv" into protquant
+     tuple file("${protxml.baseName}_stpeter.prot.xml"), file(pepxml) into stpeter_output
      
     script:
     """
-    StPeter -f ${params.quantification_fdr}  "${protxml}"
-    StPeter -i -f ${params.quantification_fdr}  "${protxml}"
+    cp "${protxml}" stpeter_in.prot.xml
+    StPeter -f ${params.quantification_fdr} -t ${params.fragment_mass_tolerance}  stpeter_in.prot.xml
+    mv stpeter_in.prot.xml "${protxml.baseName}_stpeter.prot.xml"
+# -i option not available anymore:    StPeter -i -f ${params.quantification_fdr}  "${protxml}"
     """
     
 }
 
 /*
- * STEP 5 - merge files according to experimental design
+ * STEP 6 - Convert StPeter prot.xml to csv
+*/ 
+
+process convert_stpeter {
+    publishDir "${params.outdir}"
+    input:
+	tuple file(stpeter), file(pepxml) from stpeter_output
+
+    output:
+     tuple file("${stpeter.baseName}_prot.csv"), file("${stpeter.baseName}_pep.csv") into protquant
+     
+    script:
+    """
+    cp "${stpeter}" StPeterOut.prot.xml 
+    cp "${pepxml}" Sample.pep.xml
+    python $baseDir/scripts/protXML2csv.py 
+    mv StPeterProts.csv "${stpeter.baseName}_prot.csv"
+    mv StPeterPeps.csv "${stpeter.baseName}_pep.csv"
+    """
+    
+}
+
+/*
+ * STEP 7 - merge files according to experimental design
 */ 
 
 process run_merge_quant {
@@ -367,7 +392,7 @@ process run_merge_quant {
      file exp_design_file from input_exp_design.ifEmpty(file("none"))
 
     output:
-     file "all_quant_merged.csv" into allprotquant
+     file "all_prot_quant_merged.csv" into allprotquant
      
     script:
      // no file provided
@@ -379,12 +404,13 @@ if (exp_design_file.getName() == "none") {
     """
        touch exp_design.txt  
        echo "${expdesign_text}" >> exp_design.txt
-       R CMD BATCH $baseDir/MergeOutput.R
+       R CMD BATCH $baseDir/scripts/MergeOutput.R
     """
      } else {
     """
     cp "${exp_design_file}" exp_design.txt
      R CMD BATCH $baseDir/MergeOutput.R
+
     """
      }
 
