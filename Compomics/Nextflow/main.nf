@@ -251,6 +251,9 @@ process run_searchgui_search{
 
     script:
      """
+	# needed for Myrimatch, see https://github.com/compomics/searchgui/issues/245
+	LANG=/usr/lib/locale/en_US
+	export LC_ALL=C; unset LANGUAGE
         mkdir tmp
         mkdir log       
         searchgui eu.isas.searchgui.cmd.PathSettingsCLI -temp_folder ./tmp -log ./log
