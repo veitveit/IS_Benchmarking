@@ -104,8 +104,8 @@ params.variable_mods = 'Oxidation of M'
 params.run_xtandem = 0
 params.run_msgf = 0
 params.run_comet = 0
-params.run_ms_amanda = 1
-params.run_myrimatch = 0
+params.run_ms_amanda = 0
+params.run_myrimatch = 1
 if (params.run_xtandem == 0  && params.run_msgf == 0 && params.run_comet == 0 && params.run_ms_amanda == 0 && params.run_myrimatch == 0) {
            log.error "No database engine defined. Make sure you have set one of the --run_searchengine options to 1 (searchengine can be xtandem, msgf, comet, ms_amanda, myrimatch)."; exit 1 
 }
