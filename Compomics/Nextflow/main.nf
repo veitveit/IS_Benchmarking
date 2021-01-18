@@ -102,10 +102,10 @@ params.miscleavages = 1
 params.fixed_mods = 'Carbamidomethylation of C'
 params.variable_mods = 'Oxidation of M'
 params.run_xtandem = 0
-params.run_msgf = 1
+params.run_msgf = 0
 params.run_comet = 0
 params.run_ms_amanda = 0
-params.run_myrimatch = 0
+params.run_myrimatch = 1
 if (params.run_xtandem == 0  && params.run_msgf == 0 && params.run_comet == 0 && params.run_ms_amanda == 0 && params.run_myrimatch == 0) {
            log.error "No database engine defined. Make sure you have set one of the --run_searchengine options to 1 (searchengine can be xtandem, msgf, comet, ms_amanda, myrimatch)."; exit 1 
 }
@@ -251,6 +251,9 @@ process run_searchgui_search{
 
     script:
      """
+# needed for Myrimatch, see https://github.com/compomics/searchgui/issues/245
+        LANG=/usr/lib/locale/en_US
+        export LC_ALL=C; unset LANGUAGE
         mkdir tmp
         mkdir log       
         searchgui eu.isas.searchgui.cmd.PathSettingsCLI -temp_folder ./tmp -log ./log
