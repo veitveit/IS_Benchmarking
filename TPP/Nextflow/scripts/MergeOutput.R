@@ -21,14 +21,18 @@ prot_info <- NULL
 
 for (file in exp_design[,1]) {
   t_quant <- read.csv(sub(".raw", ".pep.interact.pep.prot_stpeter.prot_prot.csv", file, fixed = T))
-   rownames(t_quant) <-  apply(t_quant[, keep_columns_once], 1, paste, collapse=";")
+  t_rownames <-  apply(t_quant[, c("protein_name","indistinguishable_protein")], 1, paste, collapse=";")
+  # some formatting of the secondary proteins as they appear in a json like format
+t_rownames <- gsub("\\[|\\]|\\'", "", t_rownames)
+rownames(t_quant) <- gsub(", ",";", t_rownames)
+#  print(rownames(t_quant))
   t_prot_info <- t_quant[, keep_columns_once]
-  quant_out[[file]] <- t_quant[,keep_columns_all]
+  quant_out[[file]] <- cbind(rownames(t_quant),t_quant[,keep_columns_all])
   prot_info <- rbind(prot_info, t_prot_info)
   colnames(quant_out[[file]]) <- paste(colnames(quant_out[[file]]), exp_design[file,2], exp_design[file,3], sep="_")
 }
 prot_info <- unique(prot_info)
-all_quant <- Reduce(function(x, y) merge(x, y, by=0, all=TRUE), quant_out)
+all_quant <- Reduce(function(x, y) merge(x, y, by=1, all=TRUE), quant_out)
 all_quant <- cbind(all_quant[,1], prot_info[all_quant[,1],], all_quant[,2:ncol(all_quant)])
 write.csv(all_quant, "all_prot_quant_merged.csv", row.names = F)
 
