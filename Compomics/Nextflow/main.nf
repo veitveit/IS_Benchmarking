@@ -293,6 +293,7 @@ process run_peptideshaker {
 /*
  * STEP 6 - get full PSM report from peptideshaker results (tsv)
  */
+// We might need to add the fasta file as input, as being outside the work folder
 process get_peptideshaker_tsv {
     publishDir "${params.outdir}"
     input:
