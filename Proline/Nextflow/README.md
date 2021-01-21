@@ -5,7 +5,7 @@ The provided workflow is based on the docker image veitveit/prolineworkflow that
 You can also create the image by the following command:
 ```
 # main.nf workflow image creation
-docker build -t "veitveit/veitveit/prolineworkflow:dev" .
+docker build -t "veitveit/prolineworkflow:dev" .
 
 ```
 
