@@ -64,6 +64,15 @@ params.proteinfdr = 0.01
 params.outPara ='./parameters.xml'
 params.outExpDes = './experimentalDesign.txt'
 
+params.proteinGroups = "./proteinGroups.txt"
+params.mqResults = "MaxQuantResults"
+
+// NormalyzerDE parameters
+params.project = "PXD001819"
+// Which groups to compare
+params.comparisons = 'c("1-2","2-3")'
+params.normalyzerDesign = "${params.outdir}/normalyzer_design.txt"
+params.normalyzerMethod = "log2"
 
 /*
  * SET UP CONFIGURATION VARIABLES
@@ -119,7 +128,7 @@ process run_sdrf {
 
     script: 
     """
-    parse_sdrf convert-maxquant -s ${sdrf_file} -f ${params.fasta} -m ${params.match} -pef ${params.peptidefdr} -prf ${params.proteinfdr} -t ${params.tempfol} -r ${params.raws} -n ${params.numthreads} -o1 ${params.outPara} -o2 ${params.outExpDes}
+    parse_sdrf convert-maxquant -s ${params.sdrf} -f ${params.fasta} -m ${params.match} -pef ${params.peptidefdr} -prf ${params.proteinfdr} -t ${params.tempfol} -r ${params.raws} -n ${params.numthreads} -o1 ${params.outPara} -o2 ${params.outExpDes}
     """
 }
 
@@ -134,13 +143,40 @@ process run_maxquant {
         file rawfile from input_raw
         path mqparameters from outParameters
 
+    output:
+        file "${params.proteinGroups}" into input_proteinGroups	
+
+
     script:
     """
     maxquant ${mqparameters}
-    cp -R "${params.raws}"/combined/txt/* "$baseDir/results/"
+    mkdir -p "${params.outdir}/${params.mqResults}"
+    cp -R "${params.raws}"/combined/txt/* "${params.outdir}/${params.mqResults}"
+    cp "${params.raws}/combined/txt/proteinGroups.txt" "${params.proteinGroups}"
     """        
 }
 
+/*
+* STEP 3 - Run NormalyzerDE
+*/
+process run_normalyzerde {
+
+    publishDir "${params.outdir}"
+
+    input:
+        path sdrf_file from input_sdrf2
+        path exp_file from outExpDesign
+        path protein_file from input_proteinGroups
+    script:
+    """
+#    paste ${exp_file} ${sdrf_file} | awk '{OFS="\\t"}{print \$3, \$NF}' > ${params.normalyzerDesign}
+#    sed -i '1s/.*/sample\\tgroup/' ${params.normalyzerDesign}
+    Rscript -e 'NormalyzerDE::normalyzer(jobName="${params.project}", designPath="${params.normalyzerDesign}", dataPath="${protein_file}", zeroToNA = TRUE, inputFormat = "maxquantprot", outputDir="${params.outdir}")'
+    Rscript -e 'NormalyzerDE::normalyzerDE(jobName="${params.project}", comparisons=${params.comparisons}, designPath="${params.normalyzerDesign}", dataPath="${params.outdir}/${params.project}/${params.normalyzerMethod}-normalized.txt", outputDir="${params.outdir}")'
+
+
+    """   
+}
 
 
 workflow.onComplete {
