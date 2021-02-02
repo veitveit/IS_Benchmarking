@@ -1,28 +1,48 @@
 # Workflow to analyze label-free data with MaxQuant
-This workflow is based on a docker image which has to be created beforehand: exaexa:maxquant
+This workflow is based on Nextflow, running with singularity and SDRF implemented. Normalization and statistical comparisons using NormalyzerDE are conducted on the MaxQuant results.
+
 
 ## Getting started
 
-This script assumes that Docker is available on your system and is targeting Debian/Ubuntu linux distributions.
+This script assumes that Singularity is available on your system and is targeting Debian/Ubuntu linux distributions.
 
-This workflow is not so far implemented in Nextflow as it does not use more than one tool
+This script is working with Nextflow,and needs the SDRF file for the project wanted to be run.
+
+The SDRF can be found under annotated projects, and for the PXD001819, the file is added under data.
+URL for SDRF files: https://github.com/bigbio/proteomics-metadata-standard/tree/master/annotated-projects
+
+An experimental design file for the NormalyzerDE part can also be found in the data folder. 
 
 ## Run benchmarking data set
 
 Download the raw files from PRIDE: http://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD001819
 
-Run the workflow with the following command and parameters after  
-a) changing _RAWFOLDER_ to the folder where the raw files are located.   
-b) placing the parameter file _mqpar_LFW_PXD001819.xml_ into in the current folder  
-c) changíng the paths of both fasta file and the raw files in the maxquant parameter file. 
+Run the workflow, giving the following parameters:
 
-The parameter file is given in the Results folder of this workflow: https://github.com/veitveit/IS_Benchmarking/edit/master/MaxQuant/Results
+1) The rawfolder, and nextflow needs read and write access to the directory. The path needs to absolute and not relative.
+2) The SDRF.tsv file. Relative paths works fine.
+3) The fasta file, and this needs a absolute file path, not relative. 
+4) The absolute path to the Normalyzer experimental design file
+5) Which normalization method to use.
+5) The group comparisons to perform in NormalyzerDE.
 
-The outputfiles will be written into _RAWFOLDER_
-
+These settings and more for the PXD001819 project are given in the configuration file PXD001819.conf under data.
+Just make sure to update the paths in the configuration file, and then run as
 
 ```
-docker run -it --rm -v ${PWD}:/import -v RAWFOLDER:/input_raw veitveit/maxquant:dev bash  -c 'cd /import; maxquant  mqpar_LFQ_PXD001819.xml'
+nextflow main.nf -c PXD001819.conf -profile singularity
+```
+
+The SDRF for PXD001819 file is given in the data folder of this workflow:s https://github.com/veitveit/IS_Benchmarking/tree/master/MaxQuant/Nextflow/NextFlow/data
+
+The output files will be written into the combined directory of the specified MaxQuant raw folder and then copied into the specified output folder
+
+The NormalyzerDE results will be copied into a folder named as the 'project' parameter
+
+As alternative to running with a comnfiguration file, parameters can be set at the command line when running NextFlow:
+
+```
+nextflow main.nf --raws "rawfile Path without ending "/" " --sdrf "SDRF file path .tsv" --fasta "fasta file Path .fasta"  -profile singularity
 ```
 
 

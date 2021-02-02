@@ -6,4 +6,12 @@ channels:
 dependencies:
   - mono=5.14.0.177
   - maxquant=1.6.10.43
+  - python=3.7
+  - pip
+  - pandas
+  - click
+  - pandas_schema
+  - pytest
+  - requests
+
 
