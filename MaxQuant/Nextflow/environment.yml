@@ -6,4 +6,6 @@ channels:
 dependencies:
   - mono=5.14.0.177
   - maxquant=1.6.10.43
+  - sdrf-pipelines=0.0.12
+  - bioconductor-normalyzerde=1.8
 
