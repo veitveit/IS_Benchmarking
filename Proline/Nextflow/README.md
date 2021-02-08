@@ -1,6 +1,13 @@
-# Workflow to analyze label-free data with the searchgui and proline
-This workflow is based on a docker image which has to be created beforehand. A Dockerfile is available. 
-The image needs to be named veitveit/prolineworkflow:dev
+# Workflows to analyze label-free data with SearchGUI and Proline
+
+The provided workflow is based on the docker image veitveit/prolineworkflow that is automatically downloaded.
+
+You can also create the image by the following command:
+```
+# main.nf workflow image creation
+docker build -t "veitveit/prolineworkflow:dev" .
+
+```
 
 ## Getting started
 
@@ -39,10 +46,11 @@ Download the raw files from PRIDE: http://proteomecentral.proteomexchange.org/cg
 Run the workflow with the following command and parameters after changing _RAWFOLDER_ to the folder where the raw files are located. You will also need to place the files _pxd001819.txt_, _yeast_UPS.fasta_ and _lfq_param_file_pxd001819.txt_ into in the current folder. These files are given in the Results folder of this workflow: https://github.com/veitveit/IS_Benchmarking/tree/master/Proline/Results
 
 Also adjust the parameter values _max_cpus_ and _max_memory_ to the computing power you have available.
+When running all files, Proline will need at least 16GB.
 ```
 nextflow run main.nf --raws 'RAWFOLDER/*.raw' --fasta yeast_UPS.fasta --precursor_mass_tolerance 5 --fragment_mass_tolerance 0.8 --miscleavages 2 \
 --variable_mods 'Oxidation of M, Acetylation of protein N-term' --experiment_design 'pxd001819.txt' --lfq_param \
-'lfq_param_file.txt' --max_cpus 8 --max_memory 8GB -profile docker -with-report -with-trace -with-timeline
+'lfq_param_file.txt' --max_cpus 8 --max_memory 16GB -profile docker -with-report -with-trace -with-timeline
 
 ```
 

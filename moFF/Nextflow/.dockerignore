@@ -1,9 +1,0 @@
-.nextflow*
-.*
-absence_peak_data/
-conf/
-data/
-data2/
-external_sample_data/
-results/
-work/

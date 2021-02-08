@@ -4,7 +4,7 @@
                          nf-core/proline
 ========================================================================================
  nf-core/proline_workflow Analysis Pipeline.
- #### Homepage / Documentation
+#### Homepage / Documentation
 TODO https://github.com/nf-core/proline
 ----------------------------------------------------------------------------------------
 */
@@ -26,8 +26,8 @@ def helpMessage() {
 
     Mandatory arguments:
       --raws                            Path to input data (must be surrounded with quotes)
-      --fasta                Fasta file for database search
-      --lfq_param                      Parameter file for Proline
+      --fasta                           Fasta file for database search
+      --lfq_param                       Parameter file for Proline
       -profile                          Configuration profile to use. Can use multiple (comma separated)
                                         Available: standard, conda, docker, singularity, awsbatch, test
 
@@ -36,35 +36,22 @@ def helpMessage() {
       --peptide_max_length              Maximum peptide length for filtering
       --precursor_mass_tolerance        Mass tolerance of precursor mass (ppm)
       --fragment_mass_tolerance         Mass tolerance of fragment mass bin (Da)
-      --fragment_bin_offset             Offset of fragment mass bin (Comet specific parameter)
       --fions                          Forward ions for spectral matching
       --rions                          Reverse ions for spectral matching
-      --fdr_threshold                   Threshold for FDR filtering
-      --fdr_level                       Level of FDR calculation ('peptide-level-fdrs', 'psm-level-fdrs', 'protein-level-fdrs')
-      --digest_mass_range               Mass range of peptides considered for matching
-      --activation_method               Fragmentation method ('ALL', 'CID', 'ECD', 'ETD', 'PQD', 'HCD', 'IRMPD')
-      --enzyme                          Enzymatic cleavage ('unspecific cleavage', 'Trypsin', see OpenMS enzymes)
+      --enzyme                          Enzymatic cleavage (e.g. 'Trypsin', see SearchGUI enzymes)
       --miscleavages            Number of allowed miscleavages
-      --number_mods                     Maximum number of modifications of PSMs
-      --fixed_mods                      Fixed modifications ('Carbamidomethyl (C)', see OpenMS modifications)
-      --variable_mods                   Variable modifications ('Oxidation (M)', see OpenMS modifications)
-      --num_hits                        Number of reported hits
-      --run_centroidisation             Specify whether mzml data is peak picked or not (true, false)
-      --pick_ms_levels                  The ms level used for peak picking (eg. 1, 2)
+      --fixed_mods                      Fixed modifications ('Carbamidomethyl of C', see SearchGUI modifications)
+      --variable_mods                   Variable modifications ('Oxidation of M', see Search modifications)
      --min_charge                       Minimal precursor charge 
      --max_charge                       Maximal precursor charge 
-      --max_rt_alignment_shift          Maximal retention time shift (sec) resulting from linear alignment      
       --skip_decoy_generation           Use a fasta databse that already includes decoy sequences
-      --quantification_fdr              Assess and assign ids matched between runs with an additional quantification FDR
-      --quantification_min_prob         Specify a minimum probability cut off for quantification
       --run_xtandem                     SearchGui runs xtandem database search
-      --run_msgf                        SearchGui runs msgf+ database search
-      --run_comet                       SearchGui runs comet database search
-      --run_ms_amanda                   SearchGui runs msamanda database search
-      --run_myrimatch                   SearchGui runs myrimatch database search
       
     Options for Proline:
       --experiment_design                text-file containing 2 columns: first with mzDB file names and second with names for experimental conditions
+
+    Run statistics
+      --run_statistics			Either true or false
 
     Other options:
       --outdir                          The output directory where the results will be saved
@@ -100,35 +87,22 @@ params.fragment_mass_tolerance = 0.5
 params.precursor_mass_tolerance = 30
 params.fions = "b"
 params.rions = "y"
-params.fragment_bin_offset = 0
-params.fdr_threshold = 0.01
-params.fdr_level = 'peptide-level-fdrs'
-fdr_level = (params.fdr_level == 'psm-level-fdrs') ? '' : '-'+params.fdr_level
-params.description_correct_features = 0
-params.klammer = false
-params.number_mods = 3
 
-params.num_hits = 1
-params.digest_mass_range = "800:2500"
-params.pick_ms_levels = 2
-params.run_centroidisation = false
 
 params.min_charge = 2
 params.max_charge = 3
-params.activation_method = 'ALL'
 
 params.enzyme = 'Trypsin'
 params.miscleavages = 1
 params.fixed_mods = 'Carbamidomethylation of C'
 params.variable_mods = 'Oxidation of M'
-params.spectrum_batch_size = 500
 params.run_xtandem = 1
 params.run_msgf = 0
 params.run_comet = 0
 params.run_ms_amanda = 0
 params.run_myrimatch = 0
-if (params.run_xtandem == 0  && params.run_msgf == 0 && params.run_comet == 0 && params.run_ms_amanda == 0 && params.run_myrimatch == 0) {
-           log.error "No database engine defined. Make sure you have set one of the --run_searchengine options to 1 (searchengine can be xtandem, msgf, comet, ms_amanda, myrimatch)."; exit 1 
+if (params.run_xtandem == 0) {
+           log.error "No database engine defined. Make sure you have set one of the --run_searchengine options to 1 (searchengine can be xtandem)."; exit 1 
 }
 
 params.skip_decoy_generation = false
@@ -141,13 +115,7 @@ params.experiment_design = "none"
 
 
 
-
-params.quantification_fdr = false
-params.quantification_min_prob = 0
-if (params.quantification_fdr) {
-   log.warn "Quantification FDR enabled"
-}
-
+params.run_statistics = true
 
 /*
  * SET UP CONFIGURATION VARIABLES
@@ -167,20 +135,18 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
   custom_runName = workflow.runName
 }
 
-
 /*
  * Create a channel for input raw files
  */
 Channel
-        .fromPath( params.raws ).into {input_raw; input_raw2}
+        .fromPath( params.raws ).set {input_raw}
 
 /*
  * Create a channel for fasta file
  */
   Channel
         .fromPath( params.fasta ).into {input_fasta; input_fasta2}
-  
-        
+
 /* 
  * Create a channel for proline experimental design file
  */
@@ -193,54 +159,52 @@ if (params.experiment_design == "none") {
 }
 
 /*
- * Create a channel for Proline lfq parameter file
+ * Create a channel for Proline LFQ parameter file
  */
   input_proline_param =  Channel
         .fromPath( params.lfq_param)
 
-
-
 /*
- * STEP 1 - convert raw files to mgf
+ * STEP 1.1 - Convert Thermo RAW files to mzDB
  */
-process convert_raw_mgf {
+process convert_raw_to_mzdb {
     publishDir "${params.outdir}"
     input:
       file rawfile from input_raw
-    
+
     output:
-     file "${rawfile.baseName}.mgf" into (mgfs, mgfs2, mgfs3, mgfs4)
+      file("${rawfile.baseName}.mzDB") into (mzdbs, mzdbs2, mzdbs3)
 
     script:
      """
-     ThermoRawFileParser.sh -i ${rawfile} -o ./  -f 0 -m 0
+     ls -al ./
+     thermo2mzdb "${rawfile}"
+     mv "${rawfile}.mzDB" "${rawfile.baseName}.mzDB" 
      """
-
 }
 
 /*
- * STEP 1.5 - convert raw files to mzML
+ * STEP 1.2 - Convert mzDB files to MGF
  */
-process convert_raw_mzml {
+process convert_mzdb_to_mgf {
     publishDir "${params.outdir}"
     input:
-      file rawfile from input_raw2
-
+      file mzdbfile from mzdbs
+    
     output:
-     file("${rawfile.baseName}.mzML") into mzmls
+     file "${mzdbfile.baseName}.mgf" into (mgfs, mgfs2, mgfs3, mgfs4)
 
     script:
      """
-     ThermoRawFileParser.sh -i ${rawfile} -o ./  -f 2 -z 
+     mzdb2mgf "${mzdbfile}"
+     mv "${mzdbfile}.mgf" "${mzdbfile.baseName}.mgf" 
      """
-
 }
-
 
 /*
  * STEP 1.7 - convert raw files to mzDB
  */
-process convert_mzml_mzdb {
+/*process convert_mzml_mzdb {
     publishDir "${params.outdir}"
     input:
       file mzmlfile from mzmls
@@ -254,7 +218,7 @@ process convert_mzml_mzdb {
      mv "${mzmlfile}.mzDB" "${mzmlfile.baseName}.mzDB" 
      """
 
-}
+}*/
 
 /*
  * STEP 2 - create  decoy database
@@ -286,7 +250,6 @@ process create_searchgui_paramfile {
     input:
       file fasta_decoy from fasta_with_decoy.ifEmpty(input_fasta2)
       
-
     output:
       file "searchgui.par" into (searchgui_param, searchgui_param2)
 
@@ -296,121 +259,55 @@ process create_searchgui_paramfile {
          -frag_tol ${params.fragment_mass_tolerance} -enzyme ${params.enzyme} -mc ${params.miscleavages}  \\
              -fixed_mods "${params.fixed_mods}" -variable_mods "${params.variable_mods}" -min_charge ${params.min_charge} -max_charge ${params.max_charge} \\
          -fi ${params.fions} -ri ${params.rions} -import_peptide_length_min ${params.peptide_min_length} \\
-         -import_peptide_length_max ${params.peptide_max_length} \\
+         -import_peptide_length_max ${params.peptide_max_length} -xtandem_quick_acetyl 0 -xtandem_quick_pyro 0 \\
           -db ${fasta_decoy}  -out searchgui.par
          """    
-} 
-
+}
 
 
 /*
  * STEP 4 - run database search
  */
-process run_searchgui_search{
+process run_searchgui_search {
     publishDir "${params.outdir}"
     input:
       each file(mgffile) from mgfs
       file paramfile from searchgui_param
-      
 
     output:
-     tuple file("${mgffile.baseName}.zip"), file(mgffile) into (searchgui_out)
+      file "./searchgui_results/${mgffile.baseName}.t.xml" into (search_engine_result_files, search_engine_result_files2)
+      //tuple file("${mgffile.baseName}.zip"), file(mgffile) into (searchgui_out)
 
     script:
      """
         mkdir tmp
-        mkdir log       
+        mkdir log
+
         searchgui eu.isas.searchgui.cmd.PathSettingsCLI -temp_folder ./tmp -log ./log
-         searchgui eu.isas.searchgui.cmd.SearchCLI -spectrum_files ./  -output_folder ./  -id_params ${paramfile} -threads ${task.cpus} \\
-         -xtandem ${params.run_xtandem} -msgf ${params.run_msgf} -comet ${params.run_comet} -ms_amanda ${params.run_ms_amanda} -myrimatch ${params.run_myrimatch}
-         mv searchgui_out.zip ${mgffile.baseName}.zip
+        searchgui eu.isas.searchgui.cmd.SearchCLI -spectrum_files ./  -output_folder ./  -id_params ${paramfile} -threads ${task.cpus} \\
+          -xtandem ${params.run_xtandem} -msgf ${params.run_msgf} -comet ${params.run_comet} -ms_amanda ${params.run_ms_amanda} -myrimatch ${params.run_myrimatch}
 
-         """    
+        mkdir ./searchgui_results
+        unzip searchgui_out.zip -d ./searchgui_results/
+        ls -al ./searchgui_results
+        """
 }
-
-/*
- * STEP 5 - fdr, ... by PeptideShaker
- */
-process run_peptideshaker {
-    publishDir "${params.outdir}"
-    input:
-      tuple file(search_out), file(mgffile) from searchgui_out
-      
-
-    output:
-      tuple file("${mgffile.baseName}.cpsx"), file(mgffile) into (peptideshaker_file, peptideshaker_file2)
-
-    script:
-    mem = " ${task.memory}"
-    mem = mem.replaceAll(" ","")
-    mem = mem.replaceAll("B","")
-     """
-        mkdir tmp
-        mkdir log    
-        unzip ${search_out} searchgui.par
-        peptide-shaker eu.isas.peptideshaker.cmd.PathSettingsCLI  -temp_folder ./tmp -log ./log
-        peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI -spectrum_files "./${mgffile}"  -identification_files "./${search_out}"  -id_params searchgui.par \\
-        -experiment "${params.name}" -sample "${mgffile.baseName}" -out "./${mgffile.baseName}.cpsx" -replicate 1 -threads ${task.cpus} -Xmx${mem}
-         """    
-}
-
-/*
- * STEP 6 - get PSM report from peptideshaker results (tsv)
- */
-process get_peptideshaker_tsv {
-    publishDir "${params.outdir}"
-    input:
-        tuple file(pepshaker), file(mgffile) from peptideshaker_file
-
-    output:
-      file "${params.name}_${mgffile.baseName}_1_Default_PSM_Report_with_non-validated_matches.txt" into (peptideshaker_tsv_file)
-
-    script:
-     """
-        peptide-shaker eu.isas.peptideshaker.cmd.PathSettingsCLI  -temp_folder ./tmp -log ./log
-        peptide-shaker eu.isas.peptideshaker.cmd.ReportCLI -in "./${pepshaker}" -out_reports "./" -reports "4"
-         """    
-}
-
-
-/*
- * STEP 7 - get PSM report from peptideshaker results (mzid)
-*/
-
-process get_peptideshaker_mzid {
-    publishDir "${params.outdir}"
-    input:
-        tuple file(pepshaker), file(mgffile) from peptideshaker_file2
-
-    output:
-      file("${pepshaker.baseName}.mzid") into (peptideshaker_mzids, peptideshaker_mzids2)
-
-    script:
-     """
-    peptide-shaker eu.isas.peptideshaker.cmd.PathSettingsCLI  -temp_folder ./tmp -log ./log
-        peptide-shaker eu.isas.peptideshaker.cmd.MzidCLI -in "./${pepshaker}" -output_file "./${pepshaker.baseName}.mzid" \\
-           -contact_first_name Anonyomous -contact_last_name Nextflow -contact_email 'whoami@gmail.com' -contact_address "Greenland" \\
-           -organization_name Illuminati -organization_email 'xyz@hell.xyz' -organization_address "California"
-         """    
-}
-
 
 /*
  * STEP 8 - set up Proline config filelist
 */
-
 process set_proline_inputfiles {
     publishDir "${params.outdir}"
     input:
-      val mzid from peptideshaker_mzids.collect()
-       
+      val result_files from search_engine_result_files.collect()
+    
     output:
       file "import_file_list.txt" into import_files
 
     script:
       def cmd = 'touch import_file_list.txt\n'
-      for( int i=0; i<mzid.size(); i++ ) {
-        cmd += "echo ./${mzid[i].baseName}.mzid >> import_file_list.txt\n"
+      for (int i=0; i<result_files.size(); i++ ) {
+        cmd += "echo ./${result_files[i].name} >> import_file_list.txt\n"
       } 
       cmd
 }
@@ -422,7 +319,7 @@ process set_proline_inputfiles {
 process set_proline_exp_design {
     publishDir "${params.outdir}"
     input:
-      val mzdb from mzdbs.collect()
+      val mzdb from mzdbs2.collect()
       file expdesign from input_exp_design.ifEmpty(file("none"))
       
       
@@ -430,7 +327,7 @@ process set_proline_exp_design {
       
        
     output:
-      file "quant_exp_design.txt" into (exp_design_file)
+      file "quant_exp_design.txt" into (exp_design_file, exp_design_file2)
     script: 
        // no file provided
       if (expdesign.getName() == "none") {
@@ -457,27 +354,6 @@ process set_proline_exp_design {
       }
 }
 
-
-/* TODO
- * STEP 10 - set up Proline lfq parameters, for now, just read in file
-
-process set_proline_quant_parameters {
-    publishDir "${params.outdir}"
-    input:
-      val mzid from peptideshaker_mzids.collect()
-       
-    output:
-      file "import_file_list.txt" into filenames
-
-    script:
-      def cmd = 'touch import_file_list.txt\n'
-      for( int i=0; i<mzid.size(); i++ ) {
-        cmd += "echo ${mzid[i].baseName}.mzid >> import_file_list.txt\n"
-      } 
-      cmd
-}
-*/
-
 /*
  * STEP 11 - set up Proline config filelist
 */
@@ -485,8 +361,8 @@ process run_proline {
     publishDir "${params.outdir}"
 
     input:
-      file mzid from peptideshaker_mzids2.collect()
-      file mzdb from mzdbs2.collect()
+      file rfs from search_engine_result_files2.collect()
+      file mzdbs from mzdbs3.collect()
       file lfq_param from input_proline_param
       file import_param from import_files
       file exp_design from exp_design_file
@@ -500,11 +376,10 @@ process run_proline {
     mem = mem.replaceAll("B","")
     """
     cp -r /proline/* .
-    /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/bin/java -Xmx${mem} -cp "config:lib/*:proline-cli-0.2.0-SNAPSHOT.jar" -Dlogback.configurationFile=config/logback.xml fr.proline.cli.ProlineCLI \\
-            run_lfq_workflow -i="${import_param}"  -ed="${exp_design}" -c="${lfq_param}"
+    java8 -Xmx${mem} -cp "config:lib/*:proline-cli-0.2.0-SNAPSHOT.jar" -Dlogback.configurationFile=config/logback.xml fr.proline.cli.ProlineCLI \\
+          run_lfq_workflow -i="${import_param}"  -ed="${exp_design}" -c="${lfq_param}"
     """
 }
-
 
 
 workflow.onComplete {

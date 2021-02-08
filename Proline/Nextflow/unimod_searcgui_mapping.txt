@@ -1,0 +1,138 @@
+UNIMOD:1	Acetylation of K
+UNIMOD:1	Acetylation of protein N-term
+UNIMOD:1	Acetylation of peptide N-term
+UNIMOD:2	Amidation of the peptide C-term
+UNIMOD:2	Amidation of the protein C-term
+UNIMOD:4	Carbamidomethylation of E
+UNIMOD:4	Carbamidomethylation of K
+UNIMOD:4	Carbamidomethylation of C
+UNIMOD:5	Carbamilation of K
+UNIMOD:5	Carbamilation of protein N-term
+UNIMOD:6	Carboxymethylation of C
+UNIMOD:7	Deamidation of Q
+UNIMOD:7	Deamidation of N
+UNIMOD:10	Homoserine of peptide C-term M
+UNIMOD:11	Homoserine lactone of peptide C-term M
+UNIMOD:17	NIPCAM of C
+UNIMOD:21	Phosphorylation of S
+UNIMOD:21	Phosphorylation of T
+UNIMOD:21	Phosphorylation of Y
+UNIMOD:23	Dehydration of S
+UNIMOD:23	Dehydration of T
+UNIMOD:24	Propionamide of C
+UNIMOD:24	Propionamide of K
+UNIMOD:24	Propionamide of peptide N-term
+UNIMOD:27	Pyrolidone from E
+UNIMOD:28	Pyrolidone from Q
+UNIMOD:30	Sodium adduct to D
+UNIMOD:30	Sodium adduct to E
+UNIMOD:31	Pyridylethyl of C
+UNIMOD:34	Methylation of D
+UNIMOD:34	Methylation of C
+UNIMOD:34	Methylation of S
+UNIMOD:34	Methylation of R
+UNIMOD:34	Methylation of K
+UNIMOD:34	Methylation of E
+UNIMOD:35	Oxidation of M
+UNIMOD:35	Oxidation of K
+UNIMOD:35	Oxidation of P
+UNIMOD:35	Oxidation of C
+UNIMOD:36	Dimethylation of R
+UNIMOD:36	Dimethylation of peptide N-term
+UNIMOD:36	Dimethylation of K
+UNIMOD:37	Trimethylation of K
+UNIMOD:37	Trimethylation of R
+UNIMOD:37	Trimethylation of protein N-term A
+UNIMOD:39	Methylthio of N
+UNIMOD:39	Methylthio of C
+UNIMOD:39	Methylthio of D
+UNIMOD:40	Sulfation of S
+UNIMOD:40	Sulfation of T
+UNIMOD:40	Sulfation of Y
+UNIMOD:41	Hexose of K
+UNIMOD:42	Lipoyl of K
+UNIMOD:43	HexNAc of S
+UNIMOD:43	HexNAc of T
+UNIMOD:44	Farnesylation of C
+UNIMOD:47	Palmitoylation of T
+UNIMOD:47	Palmitoylation of K
+UNIMOD:47	Palmitoylation of protein N-term
+UNIMOD:47	Palmitoylation of C
+UNIMOD:47	Palmitoylation of S
+UNIMOD:48	Geranyl-geranyl of C
+UNIMOD:52	Guanidination of peptide N-term
+UNIMOD:52	Guanidination of K
+UNIMOD:55	Glutathione of C
+UNIMOD:58	Propionyl of K light
+UNIMOD:58	Propionyl of peptide N-term light
+UNIMOD:59	Propionyl of peptide N-term heavy
+UNIMOD:59	Propionyl of K heavy
+UNIMOD:105	ICAT-O
+UNIMOD:106	ICAT-9
+UNIMOD:107	FormylMet of protein N-term
+UNIMOD:108	Nethylmaleimide of C
+UNIMOD:121	Ubiquitination of K
+UNIMOD:122	Formylation of T
+UNIMOD:122	Formylation of protein N-term
+UNIMOD:122	Formylation of S
+UNIMOD:122	Formylation of peptide N-term
+UNIMOD:122	Formylation of K
+UNIMOD:126	Thioacyl of peptide N-term
+UNIMOD:130	Diiodination of Y
+UNIMOD:188	Arginine 13C(6)
+UNIMOD:188	Lysine 13C(6)
+UNIMOD:193	18O(2) of peptide C-term
+UNIMOD:199	Dimethylation of peptide N-term 2H(4)
+UNIMOD:214	iTRAQ 4-plex of K
+UNIMOD:214	iTRAQ 4-plex of Y
+UNIMOD:214	iTRAQ 4-plex of peptide N-term
+UNIMOD:254	Acetaldehyde +26
+UNIMOD:258	18O(1) of peptide C-term
+UNIMOD:259	Lysine 13C(6) 15N(2)
+UNIMOD:267	Arginine 13C(6) 15N(4)
+UNIMOD:298	Trideuterated Methyl Ester of K
+UNIMOD:298	Trideuterated Methyl Ester of R
+UNIMOD:298	Trideuterated Methyl Ester of E
+UNIMOD:298	Trideuterated Methyl Ester of D
+UNIMOD:298	Trideuterated Methyl Ester of peptide C-term
+UNIMOD:330	Dimethylation of peptide N-term 2H(6) 13C(2)
+UNIMOD:330	Dimethylation of K 2H(6) 13C(2)
+UNIMOD:345	Trioxidation of C
+UNIMOD:364	ICPL6 of peptide N-term
+UNIMOD:364	ICPL6 of K
+UNIMOD:365	ICPL0 of peptide N-term
+UNIMOD:365	ICPL0 of K
+UNIMOD:366	Deamidation of N 18O
+UNIMOD:385	Pyrolidone from carbamidomethylated C
+UNIMOD:401	Didehydro of T
+UNIMOD:425	Dioxidation of W
+UNIMOD:425	Dioxidation of M
+UNIMOD:481	Label of K 2H(4)
+UNIMOD:481	Lysine 2H(4)
+UNIMOD:687	ICPL4 of K
+UNIMOD:687	ICPL4 of peptide N-term
+UNIMOD:695	Leucine 13C(6) 15N(1)
+UNIMOD:695	Isoleucine 13C(6) 15N(1)
+UNIMOD:730	iTRAQ 8-plex of peptide N-term
+UNIMOD:730	iTRAQ 8-plex of K
+UNIMOD:730	iTRAQ 8-plex of Y
+UNIMOD:737	TMT 6-plex of K
+UNIMOD:737	TMT 10-plex of K
+UNIMOD:737	TMT 10-plex of peptide N-term
+UNIMOD:737	TMT 6-plex of peptide N-term
+UNIMOD:738	TMT 2-plex of K
+UNIMOD:738	TMT 2-plex of peptide N-term
+UNIMOD:772	Proline 13C(5)
+UNIMOD:793	Hex(1)NAc(1) of T
+UNIMOD:793	Hex(1)NAc(1) of S
+UNIMOD:866	ICPL10 of peptide N-term
+UNIMOD:866	ICPL10 of K
+UNIMOD:888	mTRAQ of K light
+UNIMOD:888	mTRAQ of peptide N-term light
+UNIMOD:889	mTRAQ of peptide N-term 13C(3) 15N
+UNIMOD:889	mTRAQ of K 13C(3) 15N
+UNIMOD:1291	Dimethylation of K 2H(6)
+UNIMOD:1291	Dimethylation of peptide N-term 2H(6)
+UNIMOD:1302	mTRAQ of 13C(6) 15N(2)
+UNIMOD:1302	mTRAQ of peptide N-term 13C(6) 15N(2)
+UNIMOD:1408	Hex(5) HexNAc(4) NeuAc(2) Na of N

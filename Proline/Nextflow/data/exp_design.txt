@@ -1,3 +1,2 @@
-mzdbfile  exp_cond
-OVEMB150205_12.mzDB  50fmol
-OVEMB150205_14.mzDB  50fmol
+mzdbfile	exp_cond
+./UPS1_500amol_R1.mzDB	50fmol

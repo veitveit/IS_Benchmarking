@@ -1,0 +1,13 @@
+numreps: 3
+numcond: 9
+paired: false
+refcond: 2
+firstquantcol: 102
+rep_grouped: true
+csvfile: proteins.csv
+delim: ','
+decimal: '.'
+header: true
+outfile: 'polystest_prot_res.csv'
+threads: 8
+

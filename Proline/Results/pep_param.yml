@@ -1,0 +1,12 @@
+numreps: 3
+numcond: 9
+paired: false
+refcond: 0
+firstquantcol: 169
+rep_grouped: true
+csvfile: peptides.csv
+delim: ','
+decimal: '.'
+header: true
+outfile: 'polystest_pep_res.csv'
+
