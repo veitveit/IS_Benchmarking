@@ -31,7 +31,7 @@ Other options:
     --numthreads    each thread needs at least 2 GB of RAM,number of threads should be ≤ number of logical cores available          
     --peptidefdr    posterior error probability calculation based on target-decoy search, default=0.01 
     --proteinfdr    protein score = product of peptide PEPs (one for each sequence)', default=0.01
-    --match         "True" via matching between runs to boosts number of identifications, defualt = False
+    --match         "True" via matching between runs to boosts number of identifications, default = True
     --outdir        The output directory where the results will be saved
     --email         Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
     --experiment_design               Text-file containing 2 columns: first with raw file names and second with names for 
@@ -49,7 +49,6 @@ params.raws = params.raws ?: { log.error "No read data provided. Make sure you h
 params.sdrf = params.sdrf ?: {log.error "No read data provided. Make sure you have used the '--sdrf' option."; exit 1}()
 params.outdir = params.outdir ?: { log.warn "No output directory provided. Will put the results into './results'"; return "./results" }()
 params.fasta = params.fasta ?: { log.error "No fasta file provided. Make sure you have used the '--fasta' option."; exit 1}()
-params.match = params.match ?: {log.warn "No match choice. Make sure to choose and write '--match'"; return "False"}()
  
 /*
 * Define the default paramaters. 
@@ -60,12 +59,12 @@ params.match = params.match ?: {log.warn "No match choice. Make sure to choose a
 params.peptidefdr = 0.01
 params.proteinfdr = 0.01
 
-params.mqResults = "MaxQuantResults"
+params.match = "True"
 
 // NormalyzerDE parameters
 params.project = "PXD001819"
 // Which groups to compare
-params.comparisons = 'c("1-2","2-3")'
+params.comparisons = ''
 params.normalyzerMethod = "log2"
 
 /*
@@ -152,7 +151,7 @@ process run_maxquant {
     mkdir temp
     maxquant ${mqparameters}
     mkdir -p "${params.outdir}/${params.mqResults}"
-    cp -R "\$PWD/combined/txt/\*" "${params.outdir}/${params.mqResults}"
+    cp -R "\$PWD/combined/txt" "${params.outdir}"
     """        
 }
 
@@ -168,12 +167,17 @@ process run_normalyzerde {
         path exp_file from outExpDesign
         path protein_file from input_proteinGroups
         file exp_file2 from input_exp_design
+
+    output:
+	file "Normalyzer/Normalyzer_stats.tsv" into normalyzer_out
+
     script:
     """
      cp "${exp_file}" exp_file.tsv
      cp "${exp_file2}" exp_file2.tsv 
      cp "${protein_file}" protein_file.txt
-     Rscript $baseDir/runNormalyzer.R
+     Rscript $baseDir/runNormalyzer.R --comps="${params.comparisons}" --method="${params.normalyzerMethod}"
+     cp -R "\$PWD/Normalyzer" "${params.outdir}"
     """   
 }
 
