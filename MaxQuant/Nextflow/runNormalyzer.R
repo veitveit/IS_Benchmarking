@@ -24,7 +24,8 @@ write.table(final_exp, "full_design.txt",sep="\t", row.names=F,quote=F)
 # comparison set to everything versus first
 if (comps == "") {
    print("setting statistical tests to compare all conditions versus the first")
-   comps <- paste0(final_exp[2:nrow(final_exp),"group"],"-", final_exp[1,"group"])  
+   comps <- unique(final_exp[,"group"])
+   comps <- paste0(comps[2:length(comps)],"-", comps[1])  
 } else {
   comps <- unlist(strsplit(comps,","))
 }
