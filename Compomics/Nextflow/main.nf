@@ -257,7 +257,7 @@ process run_searchgui_search{
         mkdir tmp
         mkdir log       
         searchgui eu.isas.searchgui.cmd.PathSettingsCLI -temp_folder ./tmp -log ./log
-         searchgui eu.isas.searchgui.cmd.SearchCLI -spectrum_files ./  -output_folder ./ -fasta_file "${fasta_decoy}"  -id_params "${paramfile}" -threads ${task.cpus} \\
+         searchgui eu.isas.searchgui.cmd.SearchCLI -spectrum_files ./  -output_folder ./ -fasta_file "./${fasta_decoy}"  -id_params "./${paramfile}" -threads ${task.cpus} \\
          -xtandem ${params.run_xtandem} -msgf ${params.run_msgf} -comet ${params.run_comet} -ms_amanda ${params.run_ms_amanda} -myrimatch ${params.run_myrimatch}
          mv searchgui_out.zip ${mzmlfile.baseName}.zip
 
