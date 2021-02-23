@@ -1,6 +1,10 @@
 ## ELIXIR Implementation Study "Comparison, benchmarking and dissemination of proteomics data analysis pipelines"
 See also https://elixir-europe.org/about-us/commissioned-services/proteomics-pipelines
 
+## IMPORTANT NOTE:
+__We now moved to https://github.com/orgs/wombat-p/ __
+
+
 The aim of this study is to create different pipelines for the analysis of label-free proteomics data and systematically compare their results. If possible, the workflows are implemented in [NextFlow](https://www.nextflow.io/) to allow reproducible results and scalable execution on different computer architectures.
 
 ### File structure of repository
